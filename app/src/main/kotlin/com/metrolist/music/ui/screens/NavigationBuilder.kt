@@ -12,11 +12,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -71,6 +77,7 @@ import com.revenuecat.purchases.models.StoreTransaction
 import com.revenuecat.purchases.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.ui.revenuecatui.PaywallListener
 import com.revenuecat.purchases.ui.revenuecatui.PaywallOptions
+import com.revenuecat.purchases.ui.revenuecatui.customercenter.CustomerCenter
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.navigationBuilder(
@@ -81,6 +88,8 @@ fun NavGraphBuilder.navigationBuilder(
     snackbarHostState: SnackbarHostState,
     subscriptionUiState: SubscriptionUiState,
     onDismissPaywall: () -> Unit,
+    onShowPaywall: () -> Unit,
+    onNavigateToCustomerCenter: () -> Unit,
 ) {
     composable(route = "paywall") {
         Paywall(
@@ -101,6 +110,12 @@ fun NavGraphBuilder.navigationBuilder(
                     ) {}
                 })
                 .build()
+        )
+    }
+
+    composable(route = "customer_center") {
+        CustomerCenter(
+            onDismiss = { navController.navigateUp() }
         )
     }
 
@@ -131,13 +146,13 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable(Screens.ListenTogether.route) {
-        ListenTogetherScreen(navController, showTopBar = false)
+        //ListenTogetherScreen(navController, showTopBar = false)
     }
 
     composable(
         route = "listen_together_from_topbar",
     ) {
-        ListenTogetherScreen(navController, showTopBar = true)
+        //ListenTogetherScreen(navController, showTopBar = true)
     }
 
     composable("history") {
@@ -376,7 +391,12 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable("settings") {
-        SettingsScreen(navController, latestVersionName)
+        SettingsScreen(
+            navController,
+            latestVersionName = latestVersionName,
+            onShowPaywall = onShowPaywall,
+            onNavigateToCustomerCenter = onNavigateToCustomerCenter,
+        )
     }
 
     composable("settings/appearance") {
@@ -428,7 +448,7 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable(route = "settings/integrations/listen_together") {
-        ListenTogetherSettings(navController)
+        // ListenTogetherSettings(navController)
     }
 
     composable("settings/updater") {
@@ -436,7 +456,16 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable("settings/about") {
-        AboutScreen(navController)
+        // AboutScreen(navController)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "© JustPlayr\nJust Press Play!",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
     }
 
     composable("login") {

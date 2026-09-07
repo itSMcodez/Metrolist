@@ -268,4 +268,6 @@
     <string name="use_login_for_browse">Login untuk menjelajahi konten</string>
     <string name="use_login_for_browse_desc">Ini dapat memengaruhi konten yang Anda lihat dan misalnya menampilkan album khusus premium jika Anda login dengan akun Premium</string>
     <string name="action_login">Masuk</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

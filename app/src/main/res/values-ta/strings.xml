@@ -277,4 +277,6 @@
         <item quantity="other">%d தேர்ந்தெடுக்கப்பட்டன</item>
     </plurals>
     <string name="action_login">புகுபதிகை</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

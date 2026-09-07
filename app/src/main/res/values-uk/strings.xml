@@ -295,4 +295,6 @@
     <string name="use_login_for_browse_desc">Це може вплинути на те, який вміст ви бачите, і, наприклад, показує лише платні альбоми, якщо ви ввійшли в обліковий запис Premium</string>
     <string name="use_login_for_browse">Використовуйте логін для перегляду вмісту</string>
     <string name="action_login">Увійти</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

@@ -277,4 +277,6 @@
     <string name="dismiss">বাতিল করুন</string>
     <string name="options">বিকল্পসমূহ</string>
     <string name="preview">প্রিভিউ</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

@@ -268,4 +268,6 @@
     <string name="use_login_for_browse_desc">例えば、Premiumのアカウントでログインしたときに、Premium限定のアルバムが表示されるようになります。</string>
     <string name="use_login_for_browse">表示されるコンテンツをアカウントと連携する</string>
     <string name="action_login">ログイン</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

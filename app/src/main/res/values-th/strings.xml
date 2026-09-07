@@ -268,4 +268,6 @@
     <string name="new_version_available">มีเวอร์ชันใหม่พร้อมใช้งาน</string>
     <string name="translation_models">โมเดลการแปล</string>
     <string name="clear_translation_models">ล้างโมเดลการแปล</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

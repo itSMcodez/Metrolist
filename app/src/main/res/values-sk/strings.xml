@@ -295,4 +295,6 @@
     <string name="new_version_available">Nová verzia je dostupná</string>
     <string name="translation_models">Prekladové modely</string>
     <string name="clear_translation_models">Jasné modely prekladu</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

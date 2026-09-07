@@ -207,4 +207,6 @@
     <string name="action_login">लॉग इन</string>
     <string name="login">लॉगिन</string>
     <string name="login_failed">लॉगिन असफल रहा</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

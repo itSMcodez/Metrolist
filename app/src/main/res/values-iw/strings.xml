@@ -286,4 +286,6 @@
     <string name="new_version_available">גירסה חדשה זמינה</string>
     <string name="translation_models">מודלים של תרגום</string>
     <string name="clear_translation_models">ניקוי מודלי תרגום</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

@@ -268,4 +268,6 @@
     <string name="action_login">登入</string>
     <string name="use_login_for_browse">使用登入身分瀏覽內容</string>
     <string name="use_login_for_browse_desc">這會影響你看到的內容，例如若你使用 Premium 會員帳號登入，系統將會顯示 Premium 會員專屬專輯</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

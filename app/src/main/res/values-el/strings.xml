@@ -275,4 +275,6 @@
     <string name="search_history">Ιστορικό αναζήτησης</string>
     <string name="disable_screenshot">Απενεργοποίηση στιγμιότυπων οθόνης</string>
     <string name="action_login">Συνδεθείτε</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

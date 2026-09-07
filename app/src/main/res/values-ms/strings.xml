@@ -78,4 +78,6 @@
     <string name="sort_by_year">Tahun</string>
     <string name="sort_by_song_count">Kiraan lagu</string>
     <string name="sort_by_length">Panjang</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

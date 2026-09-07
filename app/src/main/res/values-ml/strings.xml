@@ -277,4 +277,6 @@
     <string name="new_version_available">പുതിയ വേർഷൻ ലഭ്യമാണ്</string>
     <string name="translation_models">വിവർത്തന പദ്ധതികൾ</string>
     <string name="clear_translation_models">വിവർത്തന പദ്ധതികൾ കളയുക</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

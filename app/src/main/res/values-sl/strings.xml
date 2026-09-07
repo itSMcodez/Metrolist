@@ -120,4 +120,6 @@
     <string name="edit_artist">Uredi izvajalca</string>
     <string name="artist_name">Ime izvajalca</string>
     <string name="error_artist_name_empty">Ime izvajalca ne sme biti prazno</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

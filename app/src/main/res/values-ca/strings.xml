@@ -286,4 +286,6 @@
     <string name="dismiss">Ignora</string>
     <string name="error_no_stream">Cap transmissió disponible</string>
     <string name="sided">Amb vores</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

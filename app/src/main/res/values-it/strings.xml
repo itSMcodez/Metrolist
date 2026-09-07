@@ -286,4 +286,6 @@
     <string name="use_login_for_browse_desc">Ciò può influenzare il contenuto che vedi e ad esempio mostra album solo premium se hai effettuato l\'accesso con un account Premium</string>
     <string name="dismiss">Ignorare</string>
     <string name="action_login">Accedi</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

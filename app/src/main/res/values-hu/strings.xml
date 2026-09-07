@@ -277,4 +277,6 @@
     <string name="dismiss">Elrejtés</string>
     <string name="options">Opciók</string>
     <string name="preview">Előnézet</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

@@ -136,6 +136,7 @@ import com.itsmcodez.justplayr.manager.DownloadAccessProvider
 import com.itsmcodez.justplayr.manager.LocalDownloadAccessManager
 import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
 import com.itsmcodez.justplayr.manager.RemoteConfigManager
+import com.itsmcodez.justplayr.manager.SubscriptionManager
 import com.itsmcodez.justplayr.manager.SubscriptionProvider
 import com.itsmcodez.justplayr.manager.SubscriptionUiState
 import com.metrolist.innertube.YouTube
@@ -546,6 +547,7 @@ class MainActivity : FragmentActivity() {
         downloadUtil: DownloadUtil,
         syncUtils: SyncUtils,
         subscriptionUiState: SubscriptionUiState,
+        subscriptionManager: SubscriptionManager,
         onDismissPaywall: () -> Unit,
     ) {
         // No ops in JustPlayr
@@ -1125,10 +1127,9 @@ class MainActivity : FragmentActivity() {
                                             }*/
                                             IconButton(onClick = { showAccountDialog = true }) {
                                                 BadgedBox(badge = {
-                                                    // No ops in JustPlayr
-                                                    /*if (latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                                                    if (subscriptionManager.isPro.not()) {
                                                         Badge()
-                                                    }*/
+                                                    }
                                                 }) {
                                                     if (accountImageUrl != null) {
                                                         AsyncImage(
@@ -1432,6 +1433,12 @@ class MainActivity : FragmentActivity() {
                                         activity = this@MainActivity,
                                         snackbarHostState = snackbarHostState,
                                         subscriptionUiState = subscriptionUiState,
+                                        onShowPaywall = {
+                                            navController.navigate("paywall")
+                                        },
+                                        onNavigateToCustomerCenter = {
+                                            navController.navigate("customer_center")
+                                        },
                                         onDismissPaywall = onDismissPaywall,
                                     )
                                 }
@@ -1454,6 +1461,12 @@ class MainActivity : FragmentActivity() {
                             onDismiss = {
                                 showAccountDialog = false
                                 homeViewModel.refresh()
+                            },
+                            onShowPaywall = {
+                                navController.navigate("paywall")
+                            },
+                            onNavigateToCustomerCenter = {
+                                navController.navigate("customer_center")
                             },
                             latestVersionName = latestVersionName,
                         )

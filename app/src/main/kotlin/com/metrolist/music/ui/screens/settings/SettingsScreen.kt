@@ -39,15 +39,20 @@ import com.metrolist.music.ui.component.ReleaseNotesCard
 import com.metrolist.music.ui.utils.backToMain
 import com.metrolist.music.utils.Updater
 import androidx.compose.runtime.remember
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavController,
+    onShowPaywall: () -> Unit,
+    onNavigateToCustomerCenter: () -> Unit,
     latestVersionName: String,
 ) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    val subscriptionManager = LocalSubscriptionManager.current
+    val subscriptionUiState = subscriptionManager.subscriptionUiState
     val isAndroid12OrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val hasAndroidAuto = remember {
         try {
@@ -73,6 +78,52 @@ fun SettingsScreen(
                 )
             )
         )
+
+        // Upgrade Section
+        Material3SettingsGroup(
+            title = stringResource(
+                if (subscriptionManager.isPro) R.string.subscription_pro_title
+                else R.string.subscription_upgrade_title,
+            ),
+            items = listOf(
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.crown),
+                    title = {
+                        Text(
+                            stringResource(
+                                if (subscriptionManager.isPro) R.string.subscription_pro_title
+                                else R.string.subscription_upgrade_title,
+                            ),
+                        )
+                    },
+                    description = {
+                        Text(
+                            stringResource(
+                                if (subscriptionManager.isPro) R.string.subscription_pro_summary
+                                else R.string.subscription_upgrade_summary,
+                            ),
+                        )
+                    },
+                    onClick = {
+                        if (subscriptionManager.isPro) {
+                            onNavigateToCustomerCenter()
+                        } else if (subscriptionUiState.isPaywallAvailable) {
+                            onShowPaywall()
+                        } else {
+                            subscriptionManager.refreshAll()
+                            Toast.makeText(
+                                context,
+                                R.string.subscription_unavailable,
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        }
+                    },
+                    showBadge = !subscriptionManager.isPro,
+                ),
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // User Interface Section
         Material3SettingsGroup(

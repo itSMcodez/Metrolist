@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.utils.parseCookieString
 import com.metrolist.music.BuildConfig
@@ -76,11 +77,15 @@ import com.metrolist.music.viewmodels.HomeViewModel
 @Composable
 fun AccountSettings(
     navController: NavController,
+    onNavigateToCustomerCenter: () -> Unit,
+    onShowPaywall: () -> Unit,
     onClose: () -> Unit,
     latestVersionName: String
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val subscriptionManager = LocalSubscriptionManager.current
+    val subscriptionUiState = subscriptionManager.subscriptionUiState
 
     val (accountNamePref, onAccountNameChange) = rememberPreference(AccountNameKey, "")
     val (accountEmail, onAccountEmailChange) = rememberPreference(AccountEmailKey, "")
@@ -127,6 +132,37 @@ fun AccountSettings(
             IconButton(onClick = onClose) {
                 Icon(painterResource(R.drawable.close), contentDescription = null)
             }
+        }
+
+        // Paywall Dialog
+        if (!subscriptionManager.isPro) {
+            Spacer(Modifier.height(12.dp))
+
+            Material3SettingsGroup(
+                items = listOf(
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.crown),
+                        title = { Text(stringResource(R.string.subscription_upgrade_title)) },
+                        description = { Text(stringResource(R.string.subscription_upgrade_summary)) },
+                        onClick = {
+                            if (subscriptionManager.isPro) {
+                                onNavigateToCustomerCenter()
+                            } else if (subscriptionUiState.isPaywallAvailable) {
+                                onShowPaywall()
+                            } else {
+                                subscriptionManager.refreshAll()
+                                android.widget.Toast.makeText(
+                                    context,
+                                    R.string.subscription_unavailable,
+                                    android.widget.Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                        },
+                        showBadge = !subscriptionManager.isPro,
+                    ),
+                ),
+                useLowContrast = true,
+            )
         }
 
         Spacer(Modifier.height(12.dp))
@@ -404,8 +440,7 @@ fun AccountSettings(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.settings)) },
                         icon = painterResource(R.drawable.settings),
-                        showBadge = /* TODO: Replace with JustPlayr Premium status*/ false /*BuildConfig.UPDATER_AVAILABLE &&
-                            latestVersionName != BuildConfig.BASE_VERSION_NAME*/,
+                        showBadge = subscriptionManager.isPro.not(),
                         onClick = {
                             onClose()
                             navController.navigate("settings")

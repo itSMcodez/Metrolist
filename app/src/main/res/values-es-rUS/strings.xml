@@ -286,4 +286,6 @@
     <string name="clear_translation_models">Modelos de traducción claros</string>
     <string name="action_like_all">Me gustan todas</string>
     <string name="squiggly">Ondulado</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>

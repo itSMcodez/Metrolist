@@ -277,4 +277,6 @@
     <string name="use_login_for_browse">Anmeldung zum Durchsuchen von Inhalten verwenden</string>
     <string name="use_login_for_browse_desc">Dies kann Einfluss darauf haben, welche Inhalte du siehst und zeigt zum Beispiel nur Premium-Alben an, wenn Sie mit einem Premium-Konto angemeldet sind</string>
     <string name="action_login">Anmelden</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
 </resources>
