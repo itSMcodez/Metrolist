@@ -5,6 +5,7 @@
 
 package com.metrolist.music.ui.screens.search
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.asPaddingValues
@@ -51,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.SavedStateHandle
+import com.itsmcodez.justplayr.manager.InterstitialAdManager
 import com.metrolist.music.LocalNavController
 import com.metrolist.innertube.models.WatchEndpoint
 import com.metrolist.innertube.utils.YouTubeUrlParser
@@ -77,6 +79,7 @@ fun SearchScreen(
     pureBlack: Boolean,
     savedStateHandle: SavedStateHandle,
 ) {
+    val activity = LocalActivity.current
     val navController = LocalNavController.current
     val database = LocalDatabase.current
     val coroutineScope = rememberCoroutineScope()
@@ -122,6 +125,10 @@ fun SearchScreen(
             kotlinx.coroutines.delay(500)
             isHandlingScrollToTop = false
         }
+    }
+
+    LaunchedEffect(Unit) {
+        activity?.let(InterstitialAdManager::preload)
     }
 
     var searchSource by rememberEnumPreference(SearchSourceKey, SearchSource.ONLINE)
@@ -308,7 +315,13 @@ fun SearchScreen(
             HideOnScrollFAB(
                 lazyListState = lazyListState,
                 icon = R.drawable.mic,
-                onClick = { navController.navigate("recognition") },
+                onClick = {
+                    activity?.let {
+                        InterstitialAdManager.showAdOnAction(it) {
+                            navController.navigate("recognition")
+                        }
+                    }
+                },
             )
         }
     }

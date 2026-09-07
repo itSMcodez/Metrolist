@@ -1649,7 +1649,7 @@ fun AppearanceSettings(
                         },
                         onClick = { onSlimNavChange(!slimNav) },
                     ),
-                    Material3SettingsItem(
+                    /*Material3SettingsItem(
                         icon = painterResource(R.drawable.group_outlined),
                         title = { Text(stringResource(R.string.listen_together_in_top_bar)) },
                         description = { Text(stringResource(R.string.listen_together_in_top_bar_desc)) },
@@ -1670,7 +1670,7 @@ fun AppearanceSettings(
                             )
                         },
                         onClick = { onListenTogetherInTopBarChange(!listenTogetherInTopBar) },
-                    ),
+                    ),*/
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.grid_view),
                         title = { Text(stringResource(R.string.grid_cell_size)) },

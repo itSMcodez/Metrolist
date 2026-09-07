@@ -389,7 +389,8 @@ fun AccountSettings(
 
         Material3SettingsGroup(
             items = buildList {
-                add(
+                // No ops in JustPlayr
+                /*add(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.integrations)) },
                         icon = painterResource(R.drawable.integration),
@@ -398,7 +399,7 @@ fun AccountSettings(
                             navController.navigate("settings/integrations")
                         }
                     )
-                )
+                )*/
                 add(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.settings)) },

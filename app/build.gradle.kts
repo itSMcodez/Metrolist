@@ -129,11 +129,72 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+
+            // Admob App ID
+            val admobAppId = localProperties.getProperty("ADMOB_APP_ID") ?: System.getenv("ADMOB_APP_ID") ?: ""
+            manifestPlaceholders["admobAppId"] = admobAppId
+
+            // Admob Ad Unit IDs
+            val admobBannerId = localProperties.getProperty("ADMOB_BANNER_ID") ?: System.getenv("ADMOB_BANNER_ID") ?: ""
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"$admobBannerId\"")
+
+            val admobInterstitialId = localProperties.getProperty("ADMOB_INTERSTITIAL_ID") ?: System.getenv("ADMOB_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$admobInterstitialId\"")
+
+            val admobRewardedInterstitialId = localProperties.getProperty("ADMOB_REWARDED_INTERSTITIAL_ID") ?: System.getenv("ADMOB_REWARDED_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"$admobRewardedInterstitialId\"")
+
+            val admobRewardedId = localProperties.getProperty("ADMOB_REWARDED_ID") ?: System.getenv("ADMOB_REWARDED_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"$admobRewardedId\"")
+
+            val admobAppOpenId = localProperties.getProperty("ADMOB_APP_OPEN_ID") ?: System.getenv("ADMOB_APP_OPEN_ID") ?: ""
+            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"$admobAppOpenId\"")
+
+            // RevenueCat
+            val revenuecatApiKey = localProperties.getProperty("REVENUECAT_API_KEY") ?: System.getenv("REVENUECAT_API_KEY") ?: ""
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"$revenuecatApiKey\"")
         }
         debug {
             applicationIdSuffix = ".debug" // JustPlayr uses this suffix
             isDebuggable = true
             resValue("string", "app_name", "JustPlayr Debug") // JustPlayr debug app name
+            // Google UMP
+            val umpTestDeviceHashedId =
+                localProperties.getProperty("UMP_TEST_DEVICE_HASHED_ID")
+                    ?: System.getenv("UMP_TEST_DEVICE_HASHED_ID")
+                    ?: ""
+            buildConfigField("String", "UMP_TEST_DEVICE_HASHED_ID", "\"$umpTestDeviceHashedId\"")
+
+            val umpDebugGeography =
+                localProperties.getProperty("UMP_DEBUG_GEOGRAPHY")
+                    ?: System.getenv("UMP_DEBUG_GEOGRAPHY")
+                    ?: "DISABLED"
+            buildConfigField("String", "UMP_DEBUG_GEOGRAPHY", "\"$umpDebugGeography\"")
+
+            // Admob Test App ID
+            val testAdmobAppId = localProperties.getProperty("TEST_ADMOB_APP_ID") ?: System.getenv("TEST_ADMOB_APP_ID") ?: ""
+            manifestPlaceholders["admobAppId"] = testAdmobAppId
+
+            // Admob Test Unit Ad IDs (BuildConfig field names kept same as release config for convenience)
+            val testAdmobBannerId = localProperties.getProperty("TEST_ADMOB_BANNER_ID") ?: System.getenv("TEST_ADMOB_BANNER_ID") ?: ""
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"$testAdmobBannerId\"")
+
+            val testAdmobInterstitialId = localProperties.getProperty("TEST_ADMOB_INTERSTITIAL_ID") ?: System.getenv("TEST_ADMOB_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$testAdmobInterstitialId\"")
+
+            val testAdmobRewardedInterstitialId = localProperties.getProperty("TEST_ADMOB_REWARDED_INTERSTITIAL_ID") ?: System.getenv("TEST_ADMOB_REWARDED_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"$testAdmobRewardedInterstitialId\"")
+
+            val testAdmobRewardedId = localProperties.getProperty("TEST_ADMOB_REWARDED_ID") ?: System.getenv("TEST_ADMOB_REWARDED_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"$testAdmobRewardedId\"")
+
+            val testAdmobAppOpenId = localProperties.getProperty("TEST_ADMOB_APP_OPEN_ID") ?: System.getenv("TEST_ADMOB_APP_OPEN_ID") ?: ""
+            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"$testAdmobAppOpenId\"")
+
+            // RevenueCat Test
+            val testRevenueCatApiKey = "test_nPqhnpXCYgkqWFwZrerZYRMlAXt"
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"$testRevenueCatApiKey\"")
+
             // JustPlayr Signing is handled by Android Studio
             /*signingConfig =
                 if (workflowDebugKeystoreFile != null) {
@@ -251,6 +312,25 @@ configurations.configureEach {
 }
 
 dependencies {
+    // Ads
+    implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.appcheck.debug)
+
+    // RevenueCat
+    implementation(libs.revenuecat.purchases)
+    implementation(libs.revenuecat.purchases.ui)
+
+    // PostHog
+    implementation("com.posthog:posthog-android:3.+")
+
     implementation(libs.guava)
     implementation(libs.coroutines.guava)
 

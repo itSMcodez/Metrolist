@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<defaults>
+    <entry>
+        <key>enable_paywall</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>enable_discover_homepage</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>enable_playr_ai</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>enable_wide_search</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>show_ads</key>
+        <value>true</value>
+    </entry>
+</defaults>

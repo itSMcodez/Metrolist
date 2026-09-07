@@ -209,7 +209,8 @@ fun SettingsScreen(
                         )
                     )
                 }
-                if (BuildConfig.UPDATER_AVAILABLE) {
+                // No ops in JustPlayr
+                /*if (BuildConfig.UPDATER_AVAILABLE) {
                     add(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.update),
@@ -225,7 +226,7 @@ fun SettingsScreen(
                         title = { Text(stringResource(R.string.changelog)) },
                         onClick = { showChangelog.value = true }
                     )
-                )
+                )*/
                 add(
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.info),

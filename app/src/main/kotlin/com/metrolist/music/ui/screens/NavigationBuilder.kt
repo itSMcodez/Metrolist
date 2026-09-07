@@ -21,8 +21,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import com.itsmcodez.justplayr.manager.SubscriptionManager
+import com.itsmcodez.justplayr.manager.SubscriptionUiState
+import com.metrolist.music.BuildConfig
 import com.metrolist.music.constants.DarkModeKey
 import com.metrolist.music.constants.PureBlackKey
 import com.metrolist.music.ui.screens.artist.ArtistAlbumsScreen
@@ -64,6 +66,11 @@ import com.metrolist.music.ui.screens.settings.integrations.ListenTogetherSettin
 import com.metrolist.music.ui.screens.wrapped.WrappedScreen
 import com.metrolist.music.utils.rememberEnumPreference
 import com.metrolist.music.utils.rememberPreference
+import com.revenuecat.purchases.CustomerInfo
+import com.revenuecat.purchases.models.StoreTransaction
+import com.revenuecat.purchases.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.ui.revenuecatui.PaywallListener
+import com.revenuecat.purchases.ui.revenuecatui.PaywallOptions
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.navigationBuilder(
@@ -72,7 +79,31 @@ fun NavGraphBuilder.navigationBuilder(
     latestVersionName: String,
     activity: Activity,
     snackbarHostState: SnackbarHostState,
+    subscriptionUiState: SubscriptionUiState,
+    onDismissPaywall: () -> Unit,
 ) {
+    composable(route = "paywall") {
+        Paywall(
+            options = PaywallOptions.Builder(
+                dismissRequest = onDismissPaywall
+            )
+                .setOffering(
+                    subscriptionUiState.offerings?.getOffering(
+                        if(BuildConfig.DEBUG) SubscriptionManager.OFFERING_TEST_DEFAULT // Default offering is used in debug
+                        else SubscriptionManager.OFFERING_JUSTPLAYR_DEFAULT // Production offering that is used in release
+                    ) ?: subscriptionUiState.offerings?.current
+                )
+                .setListener(object : PaywallListener {
+                    override fun onPurchaseCancelled() {}
+                    override fun onPurchaseCompleted(
+                        customerInfo: CustomerInfo,
+                        storeTransaction: StoreTransaction
+                    ) {}
+                })
+                .build()
+        )
+    }
+
     composable(Screens.Home.route) {
         HomeScreen(snackbarHostState = snackbarHostState)
     }

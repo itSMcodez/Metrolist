@@ -22,6 +22,15 @@ import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import coil3.request.allowHardware
 import coil3.request.crossfade
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.initialize
+import com.google.firebase.messaging.FirebaseMessaging
+import com.itsmcodez.justplayr.manager.RemoteConfigManager
+import com.itsmcodez.justplayr.manager.SubscriptionManager
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.models.ArtistConjunctions
 import com.metrolist.innertube.models.YouTubeLocale
@@ -38,6 +47,11 @@ import com.metrolist.music.utils.InnerTubeXPlayer
 import com.metrolist.music.utils.dataStore
 import com.metrolist.music.utils.safeDataStoreEdit
 import com.metrolist.music.utils.reportException
+import com.posthog.android.PostHogAndroid
+import com.posthog.android.PostHogAndroidConfig
+import com.revenuecat.purchases.LogLevel
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +91,42 @@ class App :
         CrashHandler.install(this)
         ArtistNameAliases.initialize(this)
 
+        // Initialize App Integrity
+        Firebase.initialize(context = this)
+        Firebase.appCheck.installAppCheckProviderFactory(
+            if (BuildConfig.DEBUG) DebugAppCheckProviderFactory.getInstance()
+            else PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
+
+        // Firebase Remote Config
+        RemoteConfigManager.init(BuildConfig.DEBUG)
+        RemoteConfigManager.fetch { Timber.i("Remote Config fetched: $it") }
+        RemoteConfigManager.startRealtimeUpdates { Timber.i("Remote Config updated") }
+        logFirebaseMessagingToken()
+
+        // Initialize PostHog
+        val posthogConfig = PostHogAndroidConfig(
+            apiKey = BuildConfig.POSTHOG_API_KEY,
+            host = BuildConfig.POSTHOG_HOST,
+        )
+        PostHogAndroid.setup(this, posthogConfig)
+
+        // Initialize RevenueCat only when an SDK key is available.
+        Purchases.logLevel = if (BuildConfig.DEBUG) LogLevel.DEBUG else LogLevel.WARN
+        if (BuildConfig.REVENUECAT_API_KEY.isNotBlank()) {
+            Purchases.configure(
+                PurchasesConfiguration.Builder(this, BuildConfig.REVENUECAT_API_KEY).build(),
+            )
+            SubscriptionManager.getInstance(this)
+        } else {
+            Timber.tag("App").w("RevenueCat API key is blank. Subscription features are disabled.")
+        }
+
+        // initialize admob mobile ads
+        CoroutineScope(Dispatchers.IO).launch {
+            MobileAds.initialize(this@App){}
+        }
+
         // preferencesDataStore uses filesDir/datastore; proactive mkdir reduces failures on odd ROM states
         try {
             val datastoreDir = File(filesDir, "datastore")
@@ -114,6 +164,18 @@ class App :
 
             observeSettingsChanges()
         }
+    }
+
+    private fun logFirebaseMessagingToken() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.tag("JustPlayrFCM").w(task.exception, "Fetching FCM token failed")
+                    return@addOnCompleteListener
+                }
+
+                Timber.tag("JustPlayrFCM").d("FCM token: ${task.result}")
+            }
     }
 
     private suspend fun initializeSettings() {

@@ -93,6 +93,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -130,6 +131,13 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.toBitmap
+import com.itsmcodez.justplayr.manager.AppOpenAdManager
+import com.itsmcodez.justplayr.manager.DownloadAccessProvider
+import com.itsmcodez.justplayr.manager.LocalDownloadAccessManager
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
+import com.itsmcodez.justplayr.manager.RemoteConfigManager
+import com.itsmcodez.justplayr.manager.SubscriptionProvider
+import com.itsmcodez.justplayr.manager.SubscriptionUiState
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.models.SongItem
 import com.metrolist.innertube.models.WatchEndpoint
@@ -239,6 +247,8 @@ class MainActivity : FragmentActivity() {
     }
 
     val NO_OPS_JUSTPLAYR = "No Ops for JustPlayr"
+
+    private val appOpenAdManager = AppOpenAdManager()
 
     @Inject
     lateinit var database: MusicDatabase
@@ -366,6 +376,8 @@ class MainActivity : FragmentActivity() {
         playerConnection = null
         playerConnectionSnapshot = null
 
+        appOpenAdManager.unbind(this)
+
         // Unbind before stopService: a started+bound service does not stop until all clients unbind.
         safeUnbindService("onDestroy()")
 
@@ -390,6 +402,8 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        appOpenAdManager.bind(this)
 
         // Initialize Listen Together manager
         listenTogetherManager.initialize()
@@ -464,14 +478,60 @@ class MainActivity : FragmentActivity() {
         }
 
         setContent {
-            JustPlayrApp(
-                latestVersionName = latestVersionName,
-                onLatestVersionNameChange = { latestVersionName = it },
-                playerConnection = playerConnectionSnapshot,
-                database = database,
-                downloadUtil = downloadUtil,
-                syncUtils = syncUtils,
-            )
+            SubscriptionProvider(context = this) {
+                DownloadAccessProvider(context = this) {
+                    val subscriptionManager = LocalSubscriptionManager.current
+                    val downloadAccessManager = LocalDownloadAccessManager.current
+                    val subscriptionUiState = subscriptionManager.subscriptionUiState
+                    var showLaunchPaywall by rememberSaveable { mutableStateOf(false) }
+                    var hasHandledLaunchPaywall by rememberSaveable { mutableStateOf(false) }
+
+                    LaunchedEffect(
+                        subscriptionManager.isPro,
+                        subscriptionUiState.customerInfo,
+                        subscriptionUiState.offerings,
+                        subscriptionUiState.isLoading,
+                    ) {
+                        if (hasHandledLaunchPaywall) return@LaunchedEffect
+                        if (subscriptionUiState.isLoading) return@LaunchedEffect
+
+                        val hasResolvedCustomerInfo = subscriptionUiState.customerInfo != null ||
+                                subscriptionUiState.lastError != null
+                        val hasResolvedOfferings = subscriptionUiState.offerings != null ||
+                                subscriptionUiState.lastError != null
+
+                        if (!hasResolvedCustomerInfo || !hasResolvedOfferings) return@LaunchedEffect
+
+                        hasHandledLaunchPaywall = true
+                        if (!subscriptionManager.isPro && subscriptionUiState.isPaywallAvailable) {
+                            showLaunchPaywall = true
+                        }
+                    }
+
+                    JustPlayrApp(
+                        latestVersionName = latestVersionName,
+                        onLatestVersionNameChange = { latestVersionName = it },
+                        playerConnection = playerConnectionSnapshot,
+                        database = database,
+                        downloadUtil = downloadUtil,
+                        syncUtils = syncUtils,
+                        subscriptionUiState = subscriptionUiState,
+                        onDismissPaywall = {
+                            if(showLaunchPaywall) showLaunchPaywall = false
+                            if(::navController.isInitialized) navController.navigateUp()
+                        }
+                    )
+
+                    val remoteConfigFlags by RemoteConfigManager.flags.collectAsStateWithLifecycle()
+                    LaunchedEffect(showLaunchPaywall, subscriptionUiState.isPaywallAvailable, remoteConfigFlags.enablePaywall) {
+                        if(subscriptionManager.isPro) return@LaunchedEffect
+                        if (remoteConfigFlags.enablePaywall && showLaunchPaywall && subscriptionUiState.isPaywallAvailable) {
+                            if(::navController.isInitialized) navController.navigate("paywall")
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -485,6 +545,8 @@ class MainActivity : FragmentActivity() {
         database: MusicDatabase,
         downloadUtil: DownloadUtil,
         syncUtils: SyncUtils,
+        subscriptionUiState: SubscriptionUiState,
+        onDismissPaywall: () -> Unit,
     ) {
         // No ops in JustPlayr
         /*val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
@@ -702,6 +764,7 @@ class MainActivity : FragmentActivity() {
                 val bottomInsetDp = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
 
                 val navController = rememberNavController()
+                this@MainActivity.navController = navController
 
                 // No ops in JustPlayr
                 /*LaunchedEffect(Unit) {
@@ -717,15 +780,8 @@ class MainActivity : FragmentActivity() {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val (previousTab, setPreviousTab) = rememberSaveable { mutableStateOf("home") }
 
-                val (listenTogetherInTopBar) = rememberPreference(ListenTogetherInTopBarKey, defaultValue = true)
-                val navigationItems =
-                    remember(listenTogetherInTopBar) {
-                        if (listenTogetherInTopBar) {
-                            Screens.MainScreens.filter { it != Screens.ListenTogether }
-                        } else {
-                            Screens.MainScreens
-                        }
-                    }
+                //val (listenTogetherInTopBar) = rememberPreference(ListenTogetherInTopBarKey, defaultValue = true)
+                val navigationItems = remember { Screens.MainScreens.filter { it != Screens.ListenTogether } }
                 val routeIndexMap = remember(navigationItems) {
                     navigationItems.mapIndexed { i, s -> s.route to i }.toMap()
                 }
@@ -947,14 +1003,13 @@ class MainActivity : FragmentActivity() {
 
                 var shouldShowTopBar by rememberSaveable { mutableStateOf(false) }
 
-                LaunchedEffect(navBackStackEntry, listenTogetherInTopBar) {
+                LaunchedEffect(navBackStackEntry) {
                     val currentRoute = navBackStackEntry?.destination?.route
                     val isListenTogetherScreen =
                         currentRoute == Screens.ListenTogether.route ||
                             currentRoute == "listen_together_from_topbar"
                     shouldShowTopBar = currentRoute in topLevelScreens &&
-                        currentRoute != "settings" &&
-                        !(isListenTogetherScreen && listenTogetherInTopBar)
+                        currentRoute != "settings" && !isListenTogetherScreen
                 }
 
                 val coroutineScope = rememberCoroutineScope()
@@ -1059,14 +1114,15 @@ class MainActivity : FragmentActivity() {
                                                     contentDescription = stringResource(R.string.stats),
                                                 )
                                             }
-                                            if (listenTogetherInTopBar) {
+                                            // No ops in JustPlayr
+                                            /*if (listenTogetherInTopBar) {
                                                 IconButton(onClick = { navController.navigate("listen_together_from_topbar") }) {
                                                     Icon(
                                                         painter = painterResource(R.drawable.group_outlined),
                                                         contentDescription = stringResource(R.string.together),
                                                     )
                                                 }
-                                            }
+                                            }*/
                                             IconButton(onClick = { showAccountDialog = true }) {
                                                 BadgedBox(badge = {
                                                     // No ops in JustPlayr
@@ -1375,6 +1431,8 @@ class MainActivity : FragmentActivity() {
                                         latestVersionName = latestVersionName,
                                         activity = this@MainActivity,
                                         snackbarHostState = snackbarHostState,
+                                        subscriptionUiState = subscriptionUiState,
+                                        onDismissPaywall = onDismissPaywall,
                                     )
                                 }
                             }
