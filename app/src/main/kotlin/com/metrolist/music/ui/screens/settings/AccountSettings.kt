@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -403,8 +403,8 @@ fun AccountSettings(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.settings)) },
                         icon = painterResource(R.drawable.settings),
-                        showBadge = BuildConfig.UPDATER_AVAILABLE &&
-                            latestVersionName != BuildConfig.BASE_VERSION_NAME,
+                        showBadge = /* TODO: Replace with JustPlayr Premium status*/ false /*BuildConfig.UPDATER_AVAILABLE &&
+                            latestVersionName != BuildConfig.BASE_VERSION_NAME*/,
                         onClick = {
                             onClose()
                             navController.navigate("settings")
@@ -412,7 +412,8 @@ fun AccountSettings(
                     )
                 )
 
-                if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                // No ops in JustPlayr
+                /*if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
                     val releaseInfo = Updater.getCachedLatestRelease()
                     val downloadUrl = releaseInfo?.let { Updater.getDownloadUrlForCurrentVariant(it) }
                     if (downloadUrl != null) {
@@ -426,7 +427,7 @@ fun AccountSettings(
                             )
                         )
                     }
-                }
+                }*/
             },
             useLowContrast = true
         )

@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -194,7 +194,7 @@ import com.metrolist.music.ui.screens.settings.DarkMode
 import com.metrolist.music.ui.screens.settings.NavigationTab
 import com.metrolist.music.ui.theme.ColorSaver
 import com.metrolist.music.ui.theme.DefaultThemeColor
-import com.metrolist.music.ui.theme.MetrolistTheme
+import com.metrolist.music.ui.theme.JustPlayrTheme
 import com.metrolist.music.ui.theme.extractThemeColor
 import com.metrolist.music.ui.utils.appBarScrollBehavior
 import com.metrolist.music.ui.utils.resetHeightOffset
@@ -238,6 +238,8 @@ class MainActivity : FragmentActivity() {
         const val EXTRA_WIDGET_TARGET_ID = "widget_target_id"
     }
 
+    val NO_OPS_JUSTPLAYR = "No Ops for JustPlayr"
+
     @Inject
     lateinit var database: MusicDatabase
 
@@ -252,7 +254,7 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var navController: NavHostController
     private var pendingIntent: Intent? = null
-    private var latestVersionName by mutableStateOf(BuildConfig.BASE_VERSION_NAME)
+    private var latestVersionName by mutableStateOf(NO_OPS_JUSTPLAYR)
 
     // Keep PlayerConnection as regular property - NOT mutableStateOf to prevent UI recomposition
     // when it becomes null during onStop. Only update the snapshot for Compose when needed.
@@ -420,7 +422,7 @@ class MainActivity : FragmentActivity() {
         // Defer migration and version tracking to avoid blocking first frame
         lifecycleScope.launch(Dispatchers.IO) {
             val preferences = dataStore.data.first()
-            val currentVersion = BuildConfig.BASE_VERSION_NAME
+            val currentVersion = NO_OPS_JUSTPLAYR
 
             // SimpMusic Removal Migration
             if (preferences[SimpMusicMigrationDoneKey] != true) {
@@ -457,12 +459,12 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             safeDataStoreEdit { settings ->
-                settings[LastSeenVersionKey] = BuildConfig.BASE_VERSION_NAME
+                settings[LastSeenVersionKey] = NO_OPS_JUSTPLAYR /*BuildConfig.BASE_VERSION_NAME*/
             }
         }
 
         setContent {
-            MetrolistApp(
+            JustPlayrApp(
                 latestVersionName = latestVersionName,
                 onLatestVersionNameChange = { latestVersionName = it },
                 playerConnection = playerConnectionSnapshot,
@@ -476,7 +478,7 @@ class MainActivity : FragmentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun MetrolistApp(
+    private fun JustPlayrApp(
         latestVersionName: String,
         onLatestVersionNameChange: (String) -> Unit,
         playerConnection: PlayerConnection?,
@@ -484,7 +486,8 @@ class MainActivity : FragmentActivity() {
         downloadUtil: DownloadUtil,
         syncUtils: SyncUtils,
     ) {
-        val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
+        // No ops in JustPlayr
+        /*val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
         var kmpRelease by remember { mutableStateOf<ReleaseInfo?>(null) }
         var kmpUpgradeDismissed by rememberSaveable { mutableStateOf(false) }
 
@@ -539,7 +542,7 @@ class MainActivity : FragmentActivity() {
                     kmpRelease = null
                 }
             }
-        }
+        }*/
 
         val enableDynamicTheme by rememberPreference(DynamicThemeKey, defaultValue = true)
         val enableHighRefreshRate by rememberPreference(EnableHighRefreshRateKey, defaultValue = true)
@@ -654,7 +657,7 @@ class MainActivity : FragmentActivity() {
                 }
         }
 
-        MetrolistTheme(
+        JustPlayrTheme(
             darkTheme = useDarkTheme,
             pureBlack = pureBlack,
             themeColor = themeColor,
@@ -700,13 +703,14 @@ class MainActivity : FragmentActivity() {
 
                 val navController = rememberNavController()
 
-                LaunchedEffect(Unit) {
+                // No ops in JustPlayr
+                /*LaunchedEffect(Unit) {
                     val lastSeenVersion = dataStore.data.first()[LastSeenVersionKey] ?: ""
                     val currentVersion = BuildConfig.BASE_VERSION_NAME
                     if (lastSeenVersion != currentVersion) {
                         showChangelog.value = true
                     }
-                }
+                }*/
 
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 val accountImageUrl by homeViewModel.accountImageUrl.collectAsStateWithLifecycle()
@@ -1065,9 +1069,10 @@ class MainActivity : FragmentActivity() {
                                             }
                                             IconButton(onClick = { showAccountDialog = true }) {
                                                 BadgedBox(badge = {
-                                                    if (latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                                                    // No ops in JustPlayr
+                                                    /*if (latestVersionName != BuildConfig.BASE_VERSION_NAME) {
                                                         Badge()
-                                                    }
+                                                    }*/
                                                 }) {
                                                     if (accountImageUrl != null) {
                                                         AsyncImage(
@@ -1421,7 +1426,8 @@ class MainActivity : FragmentActivity() {
                         }
                     }
 
-                    if (!showChangelog.value && !kmpUpgradeDismissed) {
+                    // No ops in JustPlayr
+                    /*if (!showChangelog.value && !kmpUpgradeDismissed) {
                         kmpRelease?.let { release ->
                             val downloadUrl = release.assets.first { it.name == Updater.KMP_APK_NAME }.downloadUrl
                             AlertDialog(
@@ -1469,7 +1475,7 @@ class MainActivity : FragmentActivity() {
                                 },
                             )
                         }
-                    }
+                    }*/
                 }
             }
             }

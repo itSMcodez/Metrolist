@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -24,7 +24,7 @@ import com.metrolist.music.utils.Updater
 
 @Composable
 fun ReleaseNotesCard() {
-    val releaseInfo = Updater.getCachedLatestRelease() ?: return
+    //val releaseInfo = Updater.getCachedLatestRelease() ?: return
 
     Card(
         modifier = Modifier
@@ -44,7 +44,7 @@ fun ReleaseNotesCard() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = releaseInfo.description,
+                text = "", // releaseInfo.description,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 2.dp)
             )

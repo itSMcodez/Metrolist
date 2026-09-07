@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -74,7 +74,7 @@ fun UpdaterScreen(
         coroutineScope.launch {
             isChecking = true
             checkError = null
-            withContext(Dispatchers.IO) {
+            /*withContext(Dispatchers.IO) {
                 Updater
                     .checkForUpdate(forceRefresh = true)
                     .onSuccess { (releaseInfo, hasUpdate) ->
@@ -86,7 +86,7 @@ fun UpdaterScreen(
                     }.onFailure {
                         checkError = String.format(failedToCheckUpdatesTemplate, it.message ?: "Unknown error")
                     }
-            }
+            }*/
             isChecking = false
         }
     }

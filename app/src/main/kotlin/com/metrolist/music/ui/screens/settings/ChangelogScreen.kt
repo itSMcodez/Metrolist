@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -46,7 +46,8 @@ fun ChangelogScreen(
     var isLoading by remember { mutableStateOf(true) }
     val uriHandler = LocalUriHandler.current
 
-    LaunchedEffect(Unit) {
+    // No ops in JustPlayr
+    /*LaunchedEffect(Unit) {
         Updater.getAllReleases().onSuccess { allReleases ->
             releases = allReleases.filter { release ->
                 Updater.compareVersions(BuildConfig.BASE_VERSION_NAME, release.tagName) >= 0
@@ -55,7 +56,7 @@ fun ChangelogScreen(
         }.onFailure {
             isLoading = false
         }
-    }
+    }*/
 
     val sheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
 

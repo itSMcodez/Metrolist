@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -194,7 +194,7 @@ fun PlaybackError(
             OutlinedButton(
                 onClick = {
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    clipboard.setPrimaryClip(ClipData.newPlainText("Metrolist Playback Error", errorReport))
+                    clipboard.setPrimaryClip(ClipData.newPlainText("JustPlayr Playback Error", errorReport))
                 },
                 shape = RoundedCornerShape(20.dp),
             ) {
@@ -227,7 +227,7 @@ private fun buildPlaybackErrorReport(
     streamClient: String?,
 ): String =
     buildString {
-        appendLine("Metrolist Playback Error Report")
+        appendLine("JustPlayr Playback Error Report")
         appendLine("================================")
         appendLine("Time: ${Instant.ofEpochMilli(error.timestampMs)}")
         appendLine("App version: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")

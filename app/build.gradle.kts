@@ -7,7 +7,7 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
-val baseApplicationId = "com.metrolist.music"
+/*val baseApplicationId = "com.metrolist.music"
 val applicationIdOverride = System.getenv("METROLIST_APPLICATION_ID")?.takeIf { it.isNotBlank() }
 val appNameOverride = System.getenv("METROLIST_APP_NAME")?.takeIf { it.isNotBlank() }
 val buildCommit =
@@ -21,7 +21,7 @@ val debugKeystorePassword = System.getenv("METROLIST_DEBUG_KEYSTORE_PASSWORD")?.
 val debugKeyAlias = System.getenv("METROLIST_DEBUG_KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "androiddebugkey"
 val debugKeyPassword = System.getenv("METROLIST_DEBUG_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "android"
 val persistentDebugKeystoreFile = file("persistent-debug.keystore")
-val workflowDebugKeystoreFile = debugKeystorePathOverride?.let(::file)
+val workflowDebugKeystoreFile = debugKeystorePathOverride?.let(::file)*/
 
 plugins {
     id("com.android.application")
@@ -37,15 +37,15 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = applicationIdOverride ?: baseApplicationId
+        applicationId = "com.itsmcodez.justplayr" /*applicationIdOverride ?: baseApplicationId*/
         minSdk = 26
         targetSdk = 36
-        versionCode = 152
-        versionName = "13.6.3"
-        val baseVersionName = requireNotNull(versionName)
+        versionCode = 11 // 152
+        versionName = "2.0.0-beta" // "13.6.3"
+        /*val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
         buildCommit?.let { versionName = "$baseVersionName+$it" }
-        resValue("string", "app_name", appNameOverride ?: "Metrolist")
+        resValue("string", "app_name", appNameOverride ?: "Metrolist")*/
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -62,9 +62,11 @@ android {
         buildConfigField("String", "LASTFM_SECRET", "\"$lastFmSecret\"")
         buildConfigField("String", "ARCHITECTURE", "\"universal\"")
         buildConfigField("Long", "DISCORD_APP_ID", "1447278780795064401L")
+        buildConfigField("Boolean", "CAST_AVAILABLE", "true")
+        buildConfigField("Boolean", "UPDATER_AVAILABLE", "true")
     }
 
-    flavorDimensions += listOf("variant")
+    /*flavorDimensions += listOf("variant")
     productFlavors {
         // FOSS - Updater, but no gcast
         create("foss") {
@@ -87,9 +89,10 @@ android {
             buildConfigField("Boolean", "CAST_AVAILABLE", "false")
             buildConfigField("Boolean", "UPDATER_AVAILABLE", "false")
         }
-    }
+    }*/
 
-    signingConfigs {
+    // JustPlayr Signing is handled by Android Studio
+    /*signingConfigs {
         create("persistentDebug") {
             storeFile = persistentDebugKeystoreFile
             storePassword = "android"
@@ -114,7 +117,7 @@ android {
             storePassword = "android"
             storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
         }
-    }
+    }*/
 
     buildTypes {
         release {
@@ -128,21 +131,18 @@ android {
             )
         }
         debug {
-            if (applicationIdOverride == null) {
-                applicationIdSuffix = ".debug"
-            }
+            applicationIdSuffix = ".debug" // JustPlayr uses this suffix
             isDebuggable = true
-            if (appNameOverride == null) {
-                resValue("string", "app_name", "Metrolist Debug")
-            }
-            signingConfig =
+            resValue("string", "app_name", "JustPlayr Debug") // JustPlayr debug app name
+            // JustPlayr Signing is handled by Android Studio
+            /*signingConfig =
                 if (workflowDebugKeystoreFile != null) {
                     signingConfigs.getByName("workflowDebug")
                 } else if (persistentDebugKeystoreFile.exists()) {
                     signingConfigs.getByName("persistentDebug")
                 } else {
                     signingConfigs.getByName("debug")
-                }
+                }*/
         }
     }
 
@@ -150,13 +150,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlin {
-        jvmToolchain(21)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
     }
 
     buildFeatures {
@@ -202,6 +195,13 @@ android {
             excludes += "META-INF/INDEX.LIST"
             excludes += "META-INF/io.netty.versions.properties"
         }
+    }
+}
+
+kotlin {
+    jvmToolchain(21)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -287,9 +287,9 @@ dependencies {
     implementation(libs.media3.okhttp)
 
     // Google Cast - only included in GMS flavor (not available in F-Droid/FOSS builds)
-    "gmsImplementation"(libs.media3.cast)
-    "gmsImplementation"(libs.mediarouter)
-    "gmsImplementation"(libs.cast.framework)
+    implementation(libs.media3.cast)
+    implementation(libs.mediarouter)
+    implementation(libs.cast.framework)
 
     implementation(libs.room.runtime)
     implementation(libs.kuromoji.ipadic)
