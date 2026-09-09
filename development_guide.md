@@ -26,8 +26,11 @@ ls app/build/outputs/apk/foss/debug/app-foss-debug.apk
 This project uses GitHub Secrets to securely store API keys for building releases. To set up the secrets:
 
 1. Go to your GitHub repository settings
+
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+
 3. Add the following repository secrets:
+   
    - `LASTFM_API_KEY`: Your LastFM API key
    - `LASTFM_SECRET`: Your LastFM secret key
 

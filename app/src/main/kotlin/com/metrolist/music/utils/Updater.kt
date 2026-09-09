@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -31,7 +31,7 @@ data class ReleaseAsset(
 )
 
 object Updater {
-    private val client = HttpClient()
+    /*private val client = HttpClient()
     var lastCheckTime = -1L
         private set
     
@@ -39,14 +39,14 @@ object Updater {
     private var cachedAllReleases: List<ReleaseInfo> = emptyList()
     
     private const val CHECK_INTERVAL_MILLIS = 2 * 60 * 60 * 1000L // 2 hours
-    private const val GITHUB_API_BASE = "https://api.github.com/repos/MetrolistGroup/Metrolist"
-    private const val KMP_LATEST_RELEASE_URL = "https://api.github.com/repos/MetrolistGroup/Metrolist-KMP/releases/latest"
-    private const val KMP_APK_NAME = "Metrolist.apk"
+    private const val GITHUB_API_BASE = "https://api.github.com/repos/JustPlayrGroup/JustPlayr"
+    private const val KMP_RELEASES_URL = "https://api.github.com/repos/MetrolistGroup/Metrolist-KMP/releases?per_page=30"
+    const val KMP_APK_NAME = "Metrolist.apk"
 
-    /**
+    *//**
      * Compares two version strings.
      * Returns: 1 if v1 > v2, -1 if v1 < v2, 0 if equal
-     */
+     *//*
     fun compareVersions(v1: String, v2: String): Int {
         val v1Parts = v1.removePrefix("v").split(".").map { it.toIntOrNull() ?: 0 }
         val v2Parts = v2.removePrefix("v").split(".").map { it.toIntOrNull() ?: 0 }
@@ -63,26 +63,26 @@ object Updater {
         return 0
     }
 
-    /**
+    *//**
      * Checks if the latest version is newer than the current version.
      * Returns true if an update is available (latestVersion > currentVersion)
-     */
+     *//*
     fun isUpdateAvailable(currentVersion: String, latestVersion: String): Boolean {
         return compareVersions(latestVersion, currentVersion) > 0
     }
 
-    /**
+    *//**
      * Get the current app's architecture and variant
-     */
+     *//*
     private fun getCurrentAppVariant(): Pair<String, String> {
         val architecture = BuildConfig.ARCHITECTURE
         val variant = if (BuildConfig.CAST_AVAILABLE) "gms" else "foss"
         return architecture to variant
     }
 
-    /**
+    *//**
      * Parse release assets from GitHub API response
-     */
+     *//*
     private fun parseAssets(assetsArray: JSONArray): List<ReleaseAsset> {
         val assets = mutableListOf<ReleaseAsset>()
         
@@ -119,9 +119,9 @@ object Updater {
         return assets
     }
 
-    /**
+    *//**
      * Fetch latest release from GitHub API
-     */
+     *//*
     suspend fun getLatestRelease(forceRefresh: Boolean = false): Result<ReleaseInfo> =
         withContext(Dispatchers.IO) {
             runCatching {
@@ -148,9 +148,9 @@ object Updater {
             }
         }
 
-    /**
+    *//**
      * Fetch all releases from GitHub API (paginated)
-     */
+     *//*
     suspend fun getAllReleases(forceRefresh: Boolean = false): Result<List<ReleaseInfo>> =
         withContext(Dispatchers.IO) {
             runCatching {
@@ -191,33 +191,36 @@ object Updater {
             }
         }
 
-    internal fun parseKmpRelease(response: String): ReleaseInfo? {
-        val release = JSONObject(response)
-        val assets = parseAssets(release.getJSONArray("assets")).filter { it.name == KMP_APK_NAME }
-        val tagName = release.getString("tag_name")
-
-        return ReleaseInfo(
-            tagName = tagName,
-            versionName = tagName.removePrefix("v"),
-            description = release.optString("body").takeUnless { release.isNull("body") }.orEmpty(),
-            releaseDate = release.getString("published_at"),
-            assets = assets,
-        ).takeIf { assets.isNotEmpty() }
-    }
-
-    /**
-     * Returns the latest stable KMP release when it includes an Android APK.
-     */
+    *//**
+     * Returns the newest KMP release that provides the migration APK.
+     *//*
     suspend fun getLatestKmpRelease(): Result<ReleaseInfo?> =
         withContext(Dispatchers.IO) {
             runCatching {
-                parseKmpRelease(client.get(KMP_LATEST_RELEASE_URL).bodyAsText())
+                val releases = JSONArray(client.get(KMP_RELEASES_URL).bodyAsText())
+
+                for (i in 0 until releases.length()) {
+                    val release = releases.getJSONObject(i)
+                    val assets = parseAssets(release.getJSONArray("assets"))
+                    if (assets.none { it.name == KMP_APK_NAME }) continue
+
+                    val tagName = release.getString("tag_name")
+                    return@runCatching ReleaseInfo(
+                        tagName = tagName,
+                        versionName = release.optString("name").takeIf { it.isNotBlank() } ?: tagName,
+                        description = release.optString("body"),
+                        releaseDate = release.getString("published_at"),
+                        assets = assets,
+                    )
+                }
+
+                null
             }
         }
 
-    /**
+    *//**
      * Get the download URL for the correct app variant
-     */
+     *//*
     fun getDownloadUrlForCurrentVariant(releaseInfo: ReleaseInfo): String? {
         val (currentArch, currentVariant) = getCurrentAppVariant()
         
@@ -226,9 +229,9 @@ object Updater {
             ?.downloadUrl
     }
 
-    /**
+    *//**
      * Check if update is needed (respects 2-hour cache)
-     */
+     *//*
     suspend fun checkForUpdate(forceRefresh: Boolean = false): Result<Pair<ReleaseInfo?, Boolean>> =
         withContext(Dispatchers.IO) {
             runCatching {
@@ -258,8 +261,8 @@ object Updater {
             }
         }
 
-    /**
+    *//**
      * Get the latest release info (cached)
-     */
-    fun getCachedLatestRelease(): ReleaseInfo? = cachedReleaseInfo
+     *//*
+    fun getCachedLatestRelease(): ReleaseInfo? = cachedReleaseInfo*/
 }

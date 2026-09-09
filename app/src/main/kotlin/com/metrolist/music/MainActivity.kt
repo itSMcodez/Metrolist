@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -93,6 +93,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -130,6 +131,14 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.toBitmap
+import com.itsmcodez.justplayr.manager.AppOpenAdManager
+import com.itsmcodez.justplayr.manager.DownloadAccessProvider
+import com.itsmcodez.justplayr.manager.LocalDownloadAccessManager
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
+import com.itsmcodez.justplayr.manager.RemoteConfigManager
+import com.itsmcodez.justplayr.manager.SubscriptionManager
+import com.itsmcodez.justplayr.manager.SubscriptionProvider
+import com.itsmcodez.justplayr.manager.SubscriptionUiState
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.models.SongItem
 import com.metrolist.innertube.models.WatchEndpoint
@@ -138,8 +147,6 @@ import com.metrolist.music.constants.AppLanguageKey
 import com.metrolist.music.constants.CheckForUpdatesKey
 import com.metrolist.music.constants.DarkModeKey
 import com.metrolist.music.constants.DefaultOpenTabKey
-import com.metrolist.music.constants.DismissedKmpUpdateKey
-import com.metrolist.music.constants.DismissedStandaloneUpdateKey
 import com.metrolist.music.constants.DensityScaleKey
 import com.metrolist.music.constants.DisableScreenshotKey
 import com.metrolist.music.constants.DynamicThemeKey
@@ -196,7 +203,7 @@ import com.metrolist.music.ui.screens.settings.DarkMode
 import com.metrolist.music.ui.screens.settings.NavigationTab
 import com.metrolist.music.ui.theme.ColorSaver
 import com.metrolist.music.ui.theme.DefaultThemeColor
-import com.metrolist.music.ui.theme.MetrolistTheme
+import com.metrolist.music.ui.theme.JustPlayrTheme
 import com.metrolist.music.ui.theme.extractThemeColor
 import com.metrolist.music.ui.utils.appBarScrollBehavior
 import com.metrolist.music.ui.utils.resetHeightOffset
@@ -227,14 +234,6 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-private data class AvailableUpdate(
-    val release: ReleaseInfo,
-    val downloadUrl: String,
-    val isKmp: Boolean,
-) {
-    val dismissalKey = if (isKmp) DismissedKmpUpdateKey else DismissedStandaloneUpdateKey
-}
-
 @Suppress("DEPRECATION", "ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -247,6 +246,10 @@ class MainActivity : FragmentActivity() {
         const val EXTRA_WIDGET_TARGET_TYPE = "widget_target_type"
         const val EXTRA_WIDGET_TARGET_ID = "widget_target_id"
     }
+
+    val NO_OPS_JUSTPLAYR = "No Ops for JustPlayr"
+
+    private val appOpenAdManager = AppOpenAdManager()
 
     @Inject
     lateinit var database: MusicDatabase
@@ -262,7 +265,7 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var navController: NavHostController
     private var pendingIntent: Intent? = null
-    private var latestVersionName by mutableStateOf(BuildConfig.BASE_VERSION_NAME)
+    private var latestVersionName by mutableStateOf(NO_OPS_JUSTPLAYR)
 
     // Keep PlayerConnection as regular property - NOT mutableStateOf to prevent UI recomposition
     // when it becomes null during onStop. Only update the snapshot for Compose when needed.
@@ -374,6 +377,8 @@ class MainActivity : FragmentActivity() {
         playerConnection = null
         playerConnectionSnapshot = null
 
+        appOpenAdManager.unbind(this)
+
         // Unbind before stopService: a started+bound service does not stop until all clients unbind.
         safeUnbindService("onDestroy()")
 
@@ -398,6 +403,8 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        appOpenAdManager.bind(this)
 
         // Initialize Listen Together manager
         listenTogetherManager.initialize()
@@ -430,7 +437,7 @@ class MainActivity : FragmentActivity() {
         // Defer migration and version tracking to avoid blocking first frame
         lifecycleScope.launch(Dispatchers.IO) {
             val preferences = dataStore.data.first()
-            val currentVersion = BuildConfig.BASE_VERSION_NAME
+            val currentVersion = NO_OPS_JUSTPLAYR
 
             // SimpMusic Removal Migration
             if (preferences[SimpMusicMigrationDoneKey] != true) {
@@ -467,107 +474,140 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             safeDataStoreEdit { settings ->
-                settings[LastSeenVersionKey] = BuildConfig.BASE_VERSION_NAME
+                settings[LastSeenVersionKey] = NO_OPS_JUSTPLAYR /*BuildConfig.BASE_VERSION_NAME*/
             }
         }
 
         setContent {
-            MetrolistApp(
-                latestVersionName = latestVersionName,
-                onLatestVersionNameChange = { latestVersionName = it },
-                playerConnection = playerConnectionSnapshot,
-                database = database,
-                downloadUtil = downloadUtil,
-                syncUtils = syncUtils,
-            )
+            SubscriptionProvider(context = this) {
+                DownloadAccessProvider(context = this) {
+                    val subscriptionManager = LocalSubscriptionManager.current
+                    val downloadAccessManager = LocalDownloadAccessManager.current
+                    val subscriptionUiState = subscriptionManager.subscriptionUiState
+                    var showLaunchPaywall by rememberSaveable { mutableStateOf(false) }
+                    var hasHandledLaunchPaywall by rememberSaveable { mutableStateOf(false) }
+
+                    LaunchedEffect(
+                        subscriptionManager.isPro,
+                        subscriptionUiState.customerInfo,
+                        subscriptionUiState.offerings,
+                        subscriptionUiState.isLoading,
+                    ) {
+                        if (hasHandledLaunchPaywall) return@LaunchedEffect
+                        if (subscriptionUiState.isLoading) return@LaunchedEffect
+
+                        val hasResolvedCustomerInfo = subscriptionUiState.customerInfo != null ||
+                                subscriptionUiState.lastError != null
+                        val hasResolvedOfferings = subscriptionUiState.offerings != null ||
+                                subscriptionUiState.lastError != null
+
+                        if (!hasResolvedCustomerInfo || !hasResolvedOfferings) return@LaunchedEffect
+
+                        hasHandledLaunchPaywall = true
+                        if (!subscriptionManager.isPro && subscriptionUiState.isPaywallAvailable) {
+                            showLaunchPaywall = true
+                        }
+                    }
+
+                    JustPlayrApp(
+                        latestVersionName = latestVersionName,
+                        onLatestVersionNameChange = { latestVersionName = it },
+                        playerConnection = playerConnectionSnapshot,
+                        database = database,
+                        downloadUtil = downloadUtil,
+                        syncUtils = syncUtils,
+                        subscriptionUiState = subscriptionUiState,
+                        subscriptionManager = subscriptionManager,
+                        onDismissPaywall = {
+                            if(showLaunchPaywall) showLaunchPaywall = false
+                            if(::navController.isInitialized) navController.navigateUp()
+                        }
+                    )
+
+                    val remoteConfigFlags by RemoteConfigManager.flags.collectAsStateWithLifecycle()
+                    LaunchedEffect(showLaunchPaywall, subscriptionUiState.isPaywallAvailable, remoteConfigFlags.enablePaywall) {
+                        if(subscriptionManager.isPro) return@LaunchedEffect
+                        if (remoteConfigFlags.enablePaywall && showLaunchPaywall && subscriptionUiState.isPaywallAvailable) {
+                            if(::navController.isInitialized) navController.navigate("paywall")
+                        }
+                    }
+                }
+            }
+
         }
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun MetrolistApp(
+    private fun JustPlayrApp(
         latestVersionName: String,
         onLatestVersionNameChange: (String) -> Unit,
         playerConnection: PlayerConnection?,
         database: MusicDatabase,
         downloadUtil: DownloadUtil,
         syncUtils: SyncUtils,
+        subscriptionUiState: SubscriptionUiState,
+        subscriptionManager: SubscriptionManager,
+        onDismissPaywall: () -> Unit,
     ) {
-        val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
-        var availableUpdate by remember { mutableStateOf<AvailableUpdate?>(null) }
+        // No ops in JustPlayr
+        /*val checkForUpdates by rememberPreference(CheckForUpdatesKey, defaultValue = true)
+        var kmpRelease by remember { mutableStateOf<ReleaseInfo?>(null) }
+        var kmpUpgradeDismissed by rememberSaveable { mutableStateOf(false) }
 
         if (BuildConfig.UPDATER_AVAILABLE) {
             LaunchedEffect(checkForUpdates) {
                 if (checkForUpdates) {
-                    val preferences = dataStore.data.first()
-                    val notificationsEnabled = preferences[UpdateNotificationsEnabledKey] ?: true
-                    val (releaseInfo, hasUpdate) = Updater.checkForUpdate().getOrNull() ?: (null to false)
-                    releaseInfo?.let { onLatestVersionNameChange(it.versionName) }
+                    withContext(Dispatchers.IO) {
+                        val updatesEnabled = dataStore.get(CheckForUpdatesKey, true)
+                        val notifEnabled = dataStore.get(UpdateNotificationsEnabledKey, true)
+                        if (!updatesEnabled) return@withContext
 
-                    val standaloneUpdate =
-                        releaseInfo
-                            ?.takeIf { hasUpdate }
-                            ?.let { release ->
-                                Updater.getDownloadUrlForCurrentVariant(release)?.let { downloadUrl ->
-                                    AvailableUpdate(release, downloadUrl, isKmp = false)
-                                }
-                            }
-                    val kmpUpdate =
-                        Updater.getLatestKmpRelease().getOrNull()?.let { release ->
-                            release.assets.firstOrNull()?.let { asset ->
-                                AvailableUpdate(release, asset.downloadUrl, isKmp = true)
-                            }
-                        }
-                    val update = kmpUpdate ?: standaloneUpdate
-                    availableUpdate = update?.takeUnless {
-                        it.release.tagName == preferences[it.dismissalKey]
-                    }
+                        Updater.checkForUpdate().onSuccess { (releaseInfo, hasUpdate) ->
+                            if (releaseInfo != null) {
+                                onLatestVersionNameChange(releaseInfo.versionName)
+                                if (hasUpdate && notifEnabled) {
+                                    val downloadUrl = Updater.getDownloadUrlForCurrentVariant(releaseInfo)
+                                    if (downloadUrl != null) {
+                                        val intent = Intent(Intent.ACTION_VIEW, downloadUrl.toUri())
 
-                    if (update != null && notificationsEnabled) {
-                        val intent = Intent(Intent.ACTION_VIEW, update.downloadUrl.toUri())
-                        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                        val pending = PendingIntent.getActivity(this@MainActivity, 1001, intent, flags)
-                        val notificationText =
-                            if (update.isKmp) {
-                                getString(R.string.kmp_upgrade_warning)
-                            } else {
-                                update.release.versionName
-                            }
-                        val notification =
-                            NotificationCompat
-                                .Builder(this@MainActivity, "updates")
-                                .setSmallIcon(R.drawable.update)
-                                .setContentTitle(
-                                    if (update.isKmp) {
-                                        getString(R.string.kmp_upgrade_title, update.release.versionName)
-                                    } else {
-                                        getString(R.string.update_available_title)
-                                    },
-                                )
-                                .setContentText(notificationText)
-                                .apply {
-                                    if (update.isKmp) {
-                                        setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
+                                        val flags =
+                                            PendingIntent.FLAG_UPDATE_CURRENT or
+                                                (PendingIntent.FLAG_IMMUTABLE)
+                                        val pending = PendingIntent.getActivity(this@MainActivity, 1001, intent, flags)
+
+                                        val notif =
+                                            NotificationCompat
+                                                .Builder(this@MainActivity, "updates")
+                                                .setSmallIcon(R.drawable.update)
+                                                .setContentTitle(getString(R.string.update_available_title))
+                                                .setContentText(releaseInfo.versionName)
+                                                .setContentIntent(pending)
+                                                .setAutoCancel(true)
+                                                .build()
+
+                                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                                            ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) ==
+                                            PackageManager.PERMISSION_GRANTED
+                                        ) {
+                                            NotificationManagerCompat.from(this@MainActivity).notify(1001, notif)
+                                        }
                                     }
                                 }
-                                .setContentIntent(pending)
-                                .setAutoCancel(true)
-                                .build()
+                            }
+                        }
 
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                            ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) ==
-                            PackageManager.PERMISSION_GRANTED
-                        ) {
-                            NotificationManagerCompat.from(this@MainActivity).notify(1001, notification)
+                        Updater.getLatestKmpRelease().onSuccess { releaseInfo ->
+                            kmpRelease = releaseInfo
                         }
                     }
                 } else {
                     onLatestVersionNameChange(BuildConfig.BASE_VERSION_NAME)
-                    availableUpdate = null
+                    kmpRelease = null
                 }
             }
-        }
+        }*/
 
         val enableDynamicTheme by rememberPreference(DynamicThemeKey, defaultValue = true)
         val enableHighRefreshRate by rememberPreference(EnableHighRefreshRateKey, defaultValue = true)
@@ -682,7 +722,7 @@ class MainActivity : FragmentActivity() {
                 }
         }
 
-        MetrolistTheme(
+        JustPlayrTheme(
             darkTheme = useDarkTheme,
             pureBlack = pureBlack,
             themeColor = themeColor,
@@ -727,29 +767,24 @@ class MainActivity : FragmentActivity() {
                 val bottomInsetDp = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
 
                 val navController = rememberNavController()
+                this@MainActivity.navController = navController
 
-                LaunchedEffect(Unit) {
+                // No ops in JustPlayr
+                /*LaunchedEffect(Unit) {
                     val lastSeenVersion = dataStore.data.first()[LastSeenVersionKey] ?: ""
                     val currentVersion = BuildConfig.BASE_VERSION_NAME
                     if (lastSeenVersion != currentVersion) {
                         showChangelog.value = true
                     }
-                }
+                }*/
 
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 val accountImageUrl by homeViewModel.accountImageUrl.collectAsStateWithLifecycle()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val (previousTab, setPreviousTab) = rememberSaveable { mutableStateOf("home") }
 
-                val (listenTogetherInTopBar) = rememberPreference(ListenTogetherInTopBarKey, defaultValue = true)
-                val navigationItems =
-                    remember(listenTogetherInTopBar) {
-                        if (listenTogetherInTopBar) {
-                            Screens.MainScreens.filter { it != Screens.ListenTogether }
-                        } else {
-                            Screens.MainScreens
-                        }
-                    }
+                //val (listenTogetherInTopBar) = rememberPreference(ListenTogetherInTopBarKey, defaultValue = true)
+                val navigationItems = remember { Screens.MainScreens.filter { it != Screens.ListenTogether } }
                 val routeIndexMap = remember(navigationItems) {
                     navigationItems.mapIndexed { i, s -> s.route to i }.toMap()
                 }
@@ -971,14 +1006,13 @@ class MainActivity : FragmentActivity() {
 
                 var shouldShowTopBar by rememberSaveable { mutableStateOf(false) }
 
-                LaunchedEffect(navBackStackEntry, listenTogetherInTopBar) {
+                LaunchedEffect(navBackStackEntry) {
                     val currentRoute = navBackStackEntry?.destination?.route
                     val isListenTogetherScreen =
                         currentRoute == Screens.ListenTogether.route ||
                             currentRoute == "listen_together_from_topbar"
                     shouldShowTopBar = currentRoute in topLevelScreens &&
-                        currentRoute != "settings" &&
-                        !(isListenTogetherScreen && listenTogetherInTopBar)
+                        currentRoute != "settings" && !isListenTogetherScreen
                 }
 
                 val coroutineScope = rememberCoroutineScope()
@@ -1083,17 +1117,18 @@ class MainActivity : FragmentActivity() {
                                                     contentDescription = stringResource(R.string.stats),
                                                 )
                                             }
-                                            if (listenTogetherInTopBar) {
+                                            // No ops in JustPlayr
+                                            /*if (listenTogetherInTopBar) {
                                                 IconButton(onClick = { navController.navigate("listen_together_from_topbar") }) {
                                                     Icon(
                                                         painter = painterResource(R.drawable.group_outlined),
                                                         contentDescription = stringResource(R.string.together),
                                                     )
                                                 }
-                                            }
+                                            }*/
                                             IconButton(onClick = { showAccountDialog = true }) {
                                                 BadgedBox(badge = {
-                                                    if (latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                                                    if (subscriptionManager.isPro.not()) {
                                                         Badge()
                                                     }
                                                 }) {
@@ -1398,6 +1433,14 @@ class MainActivity : FragmentActivity() {
                                         latestVersionName = latestVersionName,
                                         activity = this@MainActivity,
                                         snackbarHostState = snackbarHostState,
+                                        subscriptionUiState = subscriptionUiState,
+                                        onShowPaywall = {
+                                            navController.navigate("paywall")
+                                        },
+                                        onNavigateToCustomerCenter = {
+                                            navController.navigate("customer_center")
+                                        },
+                                        onDismissPaywall = onDismissPaywall,
                                     )
                                 }
                             }
@@ -1419,6 +1462,14 @@ class MainActivity : FragmentActivity() {
                             onDismiss = {
                                 showAccountDialog = false
                                 homeViewModel.refresh()
+                            },
+                            onShowPaywall = {
+                                navController.navigate("paywall")
+                                showAccountDialog = false
+                            },
+                            onNavigateToCustomerCenter = {
+                                navController.navigate("customer_center")
+                                showAccountDialog = false
                             },
                             latestVersionName = latestVersionName,
                         )
@@ -1449,19 +1500,15 @@ class MainActivity : FragmentActivity() {
                         }
                     }
 
-                    if (!showChangelog.value) {
-                        availableUpdate?.let { update ->
-                            val dismissUpdate: () -> Unit = {
-                                availableUpdate = null
-                                lifecycleScope.launch {
-                                    safeDataStoreEdit {
-                                        it[update.dismissalKey] = update.release.tagName
-                                    }
-                                }
-                            }
+                    // No ops in JustPlayr
+                    /*if (!showChangelog.value && !kmpUpgradeDismissed) {
+                        kmpRelease?.let { release ->
+                            val downloadUrl = release.assets.first { it.name == Updater.KMP_APK_NAME }.downloadUrl
                             AlertDialog(
-                                onDismissRequest = dismissUpdate,
-                                title = { Text(stringResource(R.string.update_available_title)) },
+                                onDismissRequest = { kmpUpgradeDismissed = true },
+                                title = {
+                                    Text(stringResource(R.string.kmp_upgrade_title, release.versionName))
+                                },
                                 text = {
                                     Column(
                                         modifier =
@@ -1470,32 +1517,17 @@ class MainActivity : FragmentActivity() {
                                                 .verticalScroll(rememberScrollState()),
                                     ) {
                                         Text(
-                                            text =
-                                                stringResource(
-                                                    if (update.isKmp) {
-                                                        R.string.kmp_upgrade_title
-                                                    } else {
-                                                        R.string.update_available_message
-                                                    },
-                                                    update.release.versionName,
-                                                ),
+                                            text = stringResource(R.string.kmp_upgrade_warning),
                                             style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.error,
                                         )
-                                        if (update.isKmp) {
-                                            Text(
-                                                text = stringResource(R.string.kmp_upgrade_warning),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.padding(top = 12.dp),
-                                            )
-                                        }
                                         Text(
                                             text = stringResource(R.string.changelog),
                                             style = MaterialTheme.typography.titleSmall,
                                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                                         )
                                         Text(
-                                            text = update.release.description.ifBlank { stringResource(R.string.changelog_empty) },
+                                            text = release.description.ifBlank { stringResource(R.string.changelog_empty) },
                                             style = MaterialTheme.typography.bodySmall,
                                         )
                                     }
@@ -1503,25 +1535,21 @@ class MainActivity : FragmentActivity() {
                                 confirmButton = {
                                     TextButton(
                                         onClick = {
-                                            dismissUpdate()
-                                            startActivity(Intent(Intent.ACTION_VIEW, update.downloadUrl.toUri()))
+                                            kmpUpgradeDismissed = true
+                                            startActivity(Intent(Intent.ACTION_VIEW, downloadUrl.toUri()))
                                         },
                                     ) {
-                                        Text(
-                                            stringResource(
-                                                if (update.isKmp) R.string.kmp_upgrade_action else R.string.update_action,
-                                            ),
-                                        )
+                                        Text(stringResource(R.string.kmp_upgrade_action))
                                     }
                                 },
                                 dismissButton = {
-                                    TextButton(onClick = dismissUpdate) {
+                                    TextButton(onClick = { kmpUpgradeDismissed = true }) {
                                         Text(stringResource(R.string.kmp_upgrade_later))
                                     }
                                 },
                             )
                         }
-                    }
+                    }*/
                 }
             }
             }

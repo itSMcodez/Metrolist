@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -28,7 +28,7 @@ import com.materialkolor.score.Score
 val DefaultThemeColor = Color(0xFFED5564)
 
 @Composable
-fun MetrolistTheme(
+fun JustPlayrTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     pureBlack: Boolean = false,
     themeColor: Color = DefaultThemeColor,

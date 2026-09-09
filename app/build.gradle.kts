@@ -7,7 +7,7 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
 
-val baseApplicationId = "com.metrolist.music"
+/*val baseApplicationId = "com.metrolist.music"
 val applicationIdOverride = System.getenv("METROLIST_APPLICATION_ID")?.takeIf { it.isNotBlank() }
 val appNameOverride = System.getenv("METROLIST_APP_NAME")?.takeIf { it.isNotBlank() }
 val buildCommit =
@@ -21,7 +21,7 @@ val debugKeystorePassword = System.getenv("METROLIST_DEBUG_KEYSTORE_PASSWORD")?.
 val debugKeyAlias = System.getenv("METROLIST_DEBUG_KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: "androiddebugkey"
 val debugKeyPassword = System.getenv("METROLIST_DEBUG_KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: "android"
 val persistentDebugKeystoreFile = file("persistent-debug.keystore")
-val workflowDebugKeystoreFile = debugKeystorePathOverride?.let(::file)
+val workflowDebugKeystoreFile = debugKeystorePathOverride?.let(::file)*/
 
 plugins {
     id("com.android.application")
@@ -30,6 +30,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -37,15 +38,15 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = applicationIdOverride ?: baseApplicationId
+        applicationId = "com.itsmcodez.justplayr" /*applicationIdOverride ?: baseApplicationId*/
         minSdk = 26
         targetSdk = 36
-        versionCode = 153
-        versionName = "13.7.0"
-        val baseVersionName = requireNotNull(versionName)
+        versionCode = 11 // 152
+        versionName = "2.0.0-beta" // "13.6.3"
+        /*val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
         buildCommit?.let { versionName = "$baseVersionName+$it" }
-        resValue("string", "app_name", appNameOverride ?: "Metrolist")
+        resValue("string", "app_name", appNameOverride ?: "Metrolist")*/
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -62,9 +63,17 @@ android {
         buildConfigField("String", "LASTFM_SECRET", "\"$lastFmSecret\"")
         buildConfigField("String", "ARCHITECTURE", "\"universal\"")
         buildConfigField("Long", "DISCORD_APP_ID", "1447278780795064401L")
+        buildConfigField("Boolean", "CAST_AVAILABLE", "true")
+        buildConfigField("Boolean", "UPDATER_AVAILABLE", "true")
+
+        // PostHog
+        val posthogApiKey = localProperties.getProperty("POSTHOG_API_KEY") ?: System.getenv("POSTHOG_API_KEY") ?: ""
+        val posthogHost = localProperties.getProperty("POSTHOG_HOST") ?: System.getenv("POSTHOG_HOST") ?: "https://us.i.posthog.com"
+        buildConfigField("String", "POSTHOG_API_KEY", "\"$posthogApiKey\"")
+        buildConfigField("String", "POSTHOG_HOST", "\"$posthogHost\"")
     }
 
-    flavorDimensions += listOf("variant")
+    /*flavorDimensions += listOf("variant")
     productFlavors {
         // FOSS - Updater, but no gcast
         create("foss") {
@@ -87,9 +96,10 @@ android {
             buildConfigField("Boolean", "CAST_AVAILABLE", "false")
             buildConfigField("Boolean", "UPDATER_AVAILABLE", "false")
         }
-    }
+    }*/
 
-    signingConfigs {
+    // JustPlayr Signing is handled by Android Studio
+    /*signingConfigs {
         create("persistentDebug") {
             storeFile = persistentDebugKeystoreFile
             storePassword = "android"
@@ -114,7 +124,7 @@ android {
             storePassword = "android"
             storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
         }
-    }
+    }*/
 
     buildTypes {
         release {
@@ -126,23 +136,81 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+
+            // Admob App ID
+            val admobAppId = localProperties.getProperty("ADMOB_APP_ID") ?: System.getenv("ADMOB_APP_ID") ?: ""
+            manifestPlaceholders["admobAppId"] = admobAppId
+
+            // Admob Ad Unit IDs
+            val admobBannerId = localProperties.getProperty("ADMOB_BANNER_ID") ?: System.getenv("ADMOB_BANNER_ID") ?: ""
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"$admobBannerId\"")
+
+            val admobInterstitialId = localProperties.getProperty("ADMOB_INTERSTITIAL_ID") ?: System.getenv("ADMOB_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$admobInterstitialId\"")
+
+            val admobRewardedInterstitialId = localProperties.getProperty("ADMOB_REWARDED_INTERSTITIAL_ID") ?: System.getenv("ADMOB_REWARDED_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"$admobRewardedInterstitialId\"")
+
+            val admobRewardedId = localProperties.getProperty("ADMOB_REWARDED_ID") ?: System.getenv("ADMOB_REWARDED_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"$admobRewardedId\"")
+
+            val admobAppOpenId = localProperties.getProperty("ADMOB_APP_OPEN_ID") ?: System.getenv("ADMOB_APP_OPEN_ID") ?: ""
+            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"$admobAppOpenId\"")
+
+            // RevenueCat
+            val revenuecatApiKey = localProperties.getProperty("REVENUECAT_API_KEY") ?: System.getenv("REVENUECAT_API_KEY") ?: ""
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"$revenuecatApiKey\"")
         }
         debug {
-            if (applicationIdOverride == null) {
-                applicationIdSuffix = ".debug"
-            }
+            applicationIdSuffix = ".debug" // JustPlayr uses this suffix
             isDebuggable = true
-            if (appNameOverride == null) {
-                resValue("string", "app_name", "Metrolist Debug")
-            }
-            signingConfig =
+            resValue("string", "app_name", "JustPlayr Debug") // JustPlayr debug app name
+            // Google UMP
+            val umpTestDeviceHashedId =
+                localProperties.getProperty("UMP_TEST_DEVICE_HASHED_ID")
+                    ?: System.getenv("UMP_TEST_DEVICE_HASHED_ID")
+                    ?: ""
+            buildConfigField("String", "UMP_TEST_DEVICE_HASHED_ID", "\"$umpTestDeviceHashedId\"")
+
+            val umpDebugGeography =
+                localProperties.getProperty("UMP_DEBUG_GEOGRAPHY")
+                    ?: System.getenv("UMP_DEBUG_GEOGRAPHY")
+                    ?: "DISABLED"
+            buildConfigField("String", "UMP_DEBUG_GEOGRAPHY", "\"$umpDebugGeography\"")
+
+            // Admob Test App ID
+            val testAdmobAppId = localProperties.getProperty("TEST_ADMOB_APP_ID") ?: System.getenv("TEST_ADMOB_APP_ID") ?: ""
+            manifestPlaceholders["admobAppId"] = testAdmobAppId
+
+            // Admob Test Unit Ad IDs (BuildConfig field names kept same as release config for convenience)
+            val testAdmobBannerId = localProperties.getProperty("TEST_ADMOB_BANNER_ID") ?: System.getenv("TEST_ADMOB_BANNER_ID") ?: ""
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"$testAdmobBannerId\"")
+
+            val testAdmobInterstitialId = localProperties.getProperty("TEST_ADMOB_INTERSTITIAL_ID") ?: System.getenv("TEST_ADMOB_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$testAdmobInterstitialId\"")
+
+            val testAdmobRewardedInterstitialId = localProperties.getProperty("TEST_ADMOB_REWARDED_INTERSTITIAL_ID") ?: System.getenv("TEST_ADMOB_REWARDED_INTERSTITIAL_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_INTERSTITIAL_ID", "\"$testAdmobRewardedInterstitialId\"")
+
+            val testAdmobRewardedId = localProperties.getProperty("TEST_ADMOB_REWARDED_ID") ?: System.getenv("TEST_ADMOB_REWARDED_ID") ?: ""
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"$testAdmobRewardedId\"")
+
+            val testAdmobAppOpenId = localProperties.getProperty("TEST_ADMOB_APP_OPEN_ID") ?: System.getenv("TEST_ADMOB_APP_OPEN_ID") ?: ""
+            buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"$testAdmobAppOpenId\"")
+
+            // RevenueCat Test
+            val testRevenueCatApiKey = "test_nPqhnpXCYgkqWFwZrerZYRMlAXt"
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"$testRevenueCatApiKey\"")
+
+            // JustPlayr Signing is handled by Android Studio
+            /*signingConfig =
                 if (workflowDebugKeystoreFile != null) {
                     signingConfigs.getByName("workflowDebug")
                 } else if (persistentDebugKeystoreFile.exists()) {
                     signingConfigs.getByName("persistentDebug")
                 } else {
                     signingConfigs.getByName("debug")
-                }
+                }*/
         }
     }
 
@@ -150,13 +218,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlin {
-        jvmToolchain(21)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
     }
 
     buildFeatures {
@@ -202,6 +263,13 @@ android {
             excludes += "META-INF/INDEX.LIST"
             excludes += "META-INF/io.netty.versions.properties"
         }
+    }
+}
+
+kotlin {
+    jvmToolchain(21)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -251,6 +319,25 @@ configurations.configureEach {
 }
 
 dependencies {
+    // Ads
+    implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.appcheck.debug)
+
+    // RevenueCat
+    implementation(libs.revenuecat.purchases)
+    implementation(libs.revenuecat.purchases.ui)
+
+    // PostHog
+    implementation("com.posthog:posthog-android:3.+")
+
     implementation(libs.guava)
     implementation(libs.coroutines.guava)
 
@@ -287,9 +374,9 @@ dependencies {
     implementation(libs.media3.okhttp)
 
     // Google Cast - only included in GMS flavor (not available in F-Droid/FOSS builds)
-    "gmsImplementation"(libs.media3.cast)
-    "gmsImplementation"(libs.mediarouter)
-    "gmsImplementation"(libs.cast.framework)
+    implementation(libs.media3.cast)
+    implementation(libs.mediarouter)
+    implementation(libs.cast.framework)
 
     implementation(libs.room.runtime)
     implementation(libs.kuromoji.ipadic)

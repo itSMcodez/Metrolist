@@ -3,7 +3,7 @@
 <!-- Upstream InnerTune strings -->
 <!-- Do not add new features here -->
 <!-- Try to re-use strings here, but be careful on its usage e.g. verb vs noun -->
-<!-- "InnerTune" is replaced with "Metrolist" -->
+<!-- "InnerTune" is replaced with "JustPlayr" -->
 <!-- Translators: Do not modify this file for translations, use InnerTune's Weblate instead. -->
 
 <resources>
@@ -343,4 +343,10 @@
     <string name="new_version_available">New version available</string>
     <string name="translation_models">Translation Models</string>
     <string name="clear_translation_models">Clear translation models</string>
+    <string name="download_reward_ad_unavailable">Ads not available, try again</string>
+    <string name="subscription_upgrade_title">JustPlayr Pro</string>
+    <string name="subscription_upgrade_summary">Upgrade to JustPlayr Pro\nEarly Bird</string>
+    <string name="subscription_unavailable">Paywall is still loading...</string>
+    <string name="subscription_pro_title">JustPlayr Pro</string>
+    <string name="subscription_pro_summary">You have full access to all features</string>
 </resources>

@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -39,15 +39,20 @@ import com.metrolist.music.ui.component.ReleaseNotesCard
 import com.metrolist.music.ui.utils.backToMain
 import com.metrolist.music.utils.Updater
 import androidx.compose.runtime.remember
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavController,
+    onShowPaywall: () -> Unit,
+    onNavigateToCustomerCenter: () -> Unit,
     latestVersionName: String,
 ) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    val subscriptionManager = LocalSubscriptionManager.current
+    val subscriptionUiState = subscriptionManager.subscriptionUiState
     val isAndroid12OrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val hasAndroidAuto = remember {
         try {
@@ -73,6 +78,52 @@ fun SettingsScreen(
                 )
             )
         )
+
+        // Upgrade Section
+        Material3SettingsGroup(
+            title = stringResource(
+                if (subscriptionManager.isPro) R.string.subscription_pro_title
+                else R.string.subscription_upgrade_title,
+            ),
+            items = listOf(
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.crown),
+                    title = {
+                        Text(
+                            stringResource(
+                                if (subscriptionManager.isPro) R.string.subscription_pro_title
+                                else R.string.subscription_upgrade_title,
+                            ),
+                        )
+                    },
+                    description = {
+                        Text(
+                            stringResource(
+                                if (subscriptionManager.isPro) R.string.subscription_pro_summary
+                                else R.string.subscription_upgrade_summary,
+                            ),
+                        )
+                    },
+                    onClick = {
+                        if (subscriptionManager.isPro) {
+                            onNavigateToCustomerCenter()
+                        } else if (subscriptionUiState.isPaywallAvailable) {
+                            onShowPaywall()
+                        } else {
+                            subscriptionManager.refreshAll()
+                            Toast.makeText(
+                                context,
+                                R.string.subscription_unavailable,
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        }
+                    },
+                    showBadge = !subscriptionManager.isPro,
+                ),
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // User Interface Section
         Material3SettingsGroup(
@@ -209,7 +260,8 @@ fun SettingsScreen(
                         )
                     )
                 }
-                if (BuildConfig.UPDATER_AVAILABLE) {
+                // No ops in JustPlayr
+                /*if (BuildConfig.UPDATER_AVAILABLE) {
                     add(
                         Material3SettingsItem(
                             icon = painterResource(R.drawable.update),
@@ -225,7 +277,7 @@ fun SettingsScreen(
                         title = { Text(stringResource(R.string.changelog)) },
                         onClick = { showChangelog.value = true }
                     )
-                )
+                )*/
                 add(
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.info),
@@ -233,7 +285,8 @@ fun SettingsScreen(
                         onClick = { navController.navigate("settings/about") }
                     )
                 )
-                if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                // No ops in JustPlayr
+                /*if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
                     val releaseInfo = Updater.getCachedLatestRelease()
                     val downloadUrl = releaseInfo?.let { Updater.getDownloadUrlForCurrentVariant(it) }
 
@@ -258,13 +311,14 @@ fun SettingsScreen(
                             )
                         )
                     }
-                }
+                }*/
             }
         )
-    if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+        // No ops in JustPlayr
+    /*if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
             Spacer(modifier = Modifier.height(16.dp))
             ReleaseNotesCard()
-        }
+        }*/
 
         Spacer(modifier = Modifier.height(16.dp))
     }

@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -7,6 +7,7 @@ package com.metrolist.music.ui.screens.recognition
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -80,6 +81,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.itsmcodez.justplayr.manager.RewardedAdManager
+import com.itsmcodez.justplayr.manager.RewardedAdManager.preload
 import com.metrolist.music.LocalDatabase
 import com.metrolist.music.R
 import com.metrolist.music.db.entities.RecognitionHistory
@@ -99,8 +102,13 @@ fun RecognitionScreen(
     autoStart: Boolean = false,
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val database = LocalDatabase.current
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        activity?.let(RewardedAdManager::preload)
+    }
 
     // Only reset in Ready state: Listening/Processing belong to a running widget-service
     // recognition that must not be cancelled; Success/NoMatch/Error are results pending
@@ -272,6 +280,15 @@ fun RecognitionScreen(
                             onClose = ::resetToReady,
                             onSaveToHistory = ::saveToHistory,
                         )
+                        // Show ad
+                        LaunchedEffect(Unit) {
+                            activity?.let {
+                                RewardedAdManager.show(
+                                    activity = activity,
+                                    onRewardEarned = {}
+                                )
+                            }
+                        }
                     }
 
                     is RecognitionStatus.NoMatch -> {

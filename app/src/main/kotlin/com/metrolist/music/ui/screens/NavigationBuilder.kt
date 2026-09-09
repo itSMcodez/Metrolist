@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -12,17 +12,26 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import com.itsmcodez.justplayr.manager.SubscriptionManager
+import com.itsmcodez.justplayr.manager.SubscriptionUiState
+import com.metrolist.music.BuildConfig
 import com.metrolist.music.constants.DarkModeKey
 import com.metrolist.music.constants.PureBlackKey
 import com.metrolist.music.ui.screens.artist.ArtistAlbumsScreen
@@ -64,6 +73,12 @@ import com.metrolist.music.ui.screens.settings.integrations.ListenTogetherSettin
 import com.metrolist.music.ui.screens.wrapped.WrappedScreen
 import com.metrolist.music.utils.rememberEnumPreference
 import com.metrolist.music.utils.rememberPreference
+import com.revenuecat.purchases.CustomerInfo
+import com.revenuecat.purchases.models.StoreTransaction
+import com.revenuecat.purchases.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.ui.revenuecatui.PaywallListener
+import com.revenuecat.purchases.ui.revenuecatui.PaywallOptions
+import com.revenuecat.purchases.ui.revenuecatui.customercenter.CustomerCenter
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.navigationBuilder(
@@ -72,7 +87,39 @@ fun NavGraphBuilder.navigationBuilder(
     latestVersionName: String,
     activity: Activity,
     snackbarHostState: SnackbarHostState,
+    subscriptionUiState: SubscriptionUiState,
+    onDismissPaywall: () -> Unit,
+    onShowPaywall: () -> Unit,
+    onNavigateToCustomerCenter: () -> Unit,
 ) {
+    composable(route = "paywall") {
+        Paywall(
+            options = PaywallOptions.Builder(
+                dismissRequest = onDismissPaywall
+            )
+                .setOffering(
+                    subscriptionUiState.offerings?.getOffering(
+                        if(BuildConfig.DEBUG) SubscriptionManager.OFFERING_TEST_DEFAULT // Default offering is used in debug
+                        else SubscriptionManager.OFFERING_JUSTPLAYR_DEFAULT // Production offering that is used in release
+                    ) ?: subscriptionUiState.offerings?.current
+                )
+                .setListener(object : PaywallListener {
+                    override fun onPurchaseCancelled() {}
+                    override fun onPurchaseCompleted(
+                        customerInfo: CustomerInfo,
+                        storeTransaction: StoreTransaction
+                    ) {}
+                })
+                .build()
+        )
+    }
+
+    composable(route = "customer_center") {
+        CustomerCenter(
+            onDismiss = { navController.navigateUp() }
+        )
+    }
+
     composable(Screens.Home.route) {
         HomeScreen(snackbarHostState = snackbarHostState)
     }
@@ -100,13 +147,13 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable(Screens.ListenTogether.route) {
-        ListenTogetherScreen(navController, showTopBar = false)
+        //ListenTogetherScreen(navController, showTopBar = false)
     }
 
     composable(
         route = "listen_together_from_topbar",
     ) {
-        ListenTogetherScreen(navController, showTopBar = true)
+        //ListenTogetherScreen(navController, showTopBar = true)
     }
 
     composable("history") {
@@ -345,7 +392,12 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable("settings") {
-        SettingsScreen(navController, latestVersionName)
+        SettingsScreen(
+            navController,
+            latestVersionName = latestVersionName,
+            onShowPaywall = onShowPaywall,
+            onNavigateToCustomerCenter = onNavigateToCustomerCenter,
+        )
     }
 
     composable("settings/appearance") {
@@ -397,7 +449,7 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable(route = "settings/integrations/listen_together") {
-        ListenTogetherSettings(navController)
+        // ListenTogetherSettings(navController)
     }
 
     composable("settings/updater") {
@@ -405,7 +457,17 @@ fun NavGraphBuilder.navigationBuilder(
     }
 
     composable("settings/about") {
-        AboutScreen(navController)
+        // AboutScreen(navController)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "JustPlayr\nJust Press Play!\n©2026",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
     }
 
     composable("login") {

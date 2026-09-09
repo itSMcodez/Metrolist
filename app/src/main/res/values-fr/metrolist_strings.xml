@@ -165,7 +165,7 @@
     <string name="scrobble_delay_minutes">Délai de scrobble (en minutes)</string>
     <string name="swipe_song_to_remove">Faites glisser pour supprimer le titre de la playlist</string>
     <string name="last_fm_send_likes">Synchroniser les favoris et les éléments non favoris</string>
-    <string name="last_fm_send_likes_description">Ajoutez ou retirez des titres de vos favoris sur Last.fm lorsque vous les ajoutez ou les retirez de vos favoris dans Metrolist</string>
+    <string name="last_fm_send_likes_description">Ajoutez ou retirez des titres de vos favoris sur Last.fm lorsque vous les ajoutez ou les retirez de vos favoris dans JustPlayr</string>
     <string name="google_cast">Google Cast</string>
     <string name="google_cast_description">Diffusez du contenu audio sur Chromecast et d\'autres appareils compatibles avec Cast</string>
     <string name="hide_video_songs">Masquer les chansons vidéo</string>
@@ -227,15 +227,15 @@
     <string name="wrapped_total_artists_subtitle">artistes uniques !</string>
     <string name="wrapped_total_songs_title">Vous avez écouté</string>
     <string name="wrapped_total_songs_subtitle">titres uniques !</string>
-    <string name="wrapped_intro_title">METROLIST</string>
+    <string name="wrapped_intro_title">JUSTPLAYR</string>
     <string name="wrapped_intro_subtitle">Il est temps de découvrir ce que vous avez écouté tout au long de cette année…</string>
     <string name="wrapped_intro_button">allons-y !</string>
-    <string name="wrapped_logo_content_description">Logo Metrolist</string>
+    <string name="wrapped_logo_content_description">Logo JustPlayr</string>
     <string name="wrapped_year">2025</string>
     <string name="wrapped_ready_title">VOTRE CADEAU EST PRÊT À ÊTRE DÉVOILÉ !</string>
     <string name="wrapped_ready_subtitle">C\'est le moment de découvrir ce que vous avez aimé tout au long de cette année…</string>
     <string name="wrapped_thank_you">Merci de votre écoute !</string>
-    <string name="wrapped_special_thanks">Remerciements particuliers à MO Agamy pour la création de Metrolist</string>
+    <string name="wrapped_special_thanks">Remerciements particuliers à MO Agamy pour la création de JustPlayr</string>
     <string name="wrapped_close">Fermer le résumé</string>
     <string name="wrapped_playlist_title">Votre %s en résumé</string>
     <string name="wrapped_create_playlist">Créer une playlist</string>
@@ -269,7 +269,7 @@
     <string name="system_equalizer">Égaliseur système</string>
     <string name="album_art">Pochette d\'album</string>
     <string name="no_song_playing">Aucun titre en cours de lecture</string>
-    <string name="tap_to_open">Appuyez pour ouvrir Metrolist</string>
+    <string name="tap_to_open">Appuyez pour ouvrir JustPlayr</string>
     <string name="previous">Précédent</string>
     <string name="play_pause">Lecture/Pause</string>
     <string name="next">Suivant</string>
@@ -364,7 +364,7 @@
     <string name="crash_description">Une erreur inattendue s\'est produite. Veuillez partager le rapport d\'erreur afin de nous aider à résoudre le problème</string>
     <string name="crash_share_logs">Partager les journaux</string>
     <string name="crash_share_title">Partager le rapport d\'incident</string>
-    <string name="crash_report_subject">Rapport d\'incident Metrolist</string>
+    <string name="crash_report_subject">Rapport d\'incident JustPlayr</string>
     <string name="crash_close">Fermer</string>
     <string name="crash_no_log">Aucun rapport d\'incident disponible</string>
     <string name="palette_dynamic">Dynamique</string>
@@ -413,7 +413,7 @@
     <string name="unblock">Débloquer</string>
     <string name="user_blocked_by_host">Bloqué par l\'hôte</string>
     <string name="not_playing">Aucun titre en cours de lecture</string>
-    <string name="tap_to_play">Appuyez pour ouvrir Metrolist</string>
+    <string name="tap_to_play">Appuyez pour ouvrir JustPlayr</string>
     <string name="widget_music_player">Lecteur de Musique</string>
     <string name="widget_turntable">Platine vinyle</string>
     <string name="together">Ensemble</string>
@@ -460,7 +460,7 @@
     <string name="song_title_column">Colonne « Titre de la chanson »</string>
     <string name="recently_converted">Récemment converti</string>
     <string name="importing_csv">Importation du fichier CSV…</string>
-    <string name="play_on_app">Jouer sur Metrolist</string>
+    <string name="play_on_app">Jouer sur JustPlayr</string>
     <string name="listening">Écoute…</string>
     <string name="continue_action">Continuer</string>
     <string name="enable">Activer</string>
@@ -496,7 +496,7 @@
     <string name="discord_buttons">Boutons</string>
     <string name="discord_button_1">Bouton 1</string>
     <string name="discord_button_2">Bouton 2</string>
-    <string name="discord_information_warning">Metrolist utilise les API publiques OAuth2 et Gateway de Discord pour partager ce que vous écoutez. L\'autorisation se produit à travers une session de navigateur locale qui se ferme après avoir capturé le code — rien n\'est envoyé à des serveur tiers. Votre jeton est enregistré sous forme encryptée sur votre appareil et n\'est jamais partagé. Metrolist se connecte directement à wss://gateway.discord.gg pour publier votre activité, et ne demande que l\'accès minimum requis (sdk.social_layer_presence).</string>
+    <string name="discord_information_warning">JustPlayr utilise les API publiques OAuth2 et Gateway de Discord pour partager ce que vous écoutez. L\'autorisation se produit à travers une session de navigateur locale qui se ferme après avoir capturé le code — rien n\'est envoyé à des serveur tiers. Votre jeton est enregistré sous forme encryptée sur votre appareil et n\'est jamais partagé. JustPlayr se connecte directement à wss://gateway.discord.gg pour publier votre activité, et ne demande que l\'accès minimum requis (sdk.social_layer_presence).</string>
     <string name="discord_activity_type">Type d\'activité</string>
     <string name="discord_activity_playing">Lire</string>
     <string name="discord_activity_listening">Écouter</string>
@@ -516,7 +516,7 @@
     <string name="credits_discord">Serveur Discord</string>
     <string name="credits_telegram">Chaîne Telegram</string>
     <string name="credits_view_repo">Consulter le dépôt</string>
-    <string name="metrolist">METROLIST</string>
+    <string name="justplayr">JUSTPLAYR</string>
     <string name="no_account_found">Aucun compte trouvé</string>
     <string name="checking_previous_account">Vérification du compte précédent…</string>
     <string name="restore">Restaurer</string>
@@ -543,7 +543,7 @@
     <string name="lyrics_provider_priority_desc">Faites glisser pour réorganiser les fournisseurs selon vos préférences. Plus la position est élevée, plus la priorité est grande</string>
     <string name="changelog">Journal des modifications</string>
     <string name="changelog_empty">Aucun journal des modifications disponible</string>
-    <string name="github_releases_url">https://github.com/MetrolistGroup/Metrolist/releases</string>
+    <string name="github_releases_url">https://github.com/JustPlayrGroup/JustPlayr/releases</string>
     <string name="list_bullet">•</string>
     <string name="view_on_github">Voir sur GitHub</string>
     <string name="current_version">Version actuelle</string>
@@ -727,7 +727,7 @@
     <string name="recognition_notification_processing">Identification en cours…</string>
     <string name="recognition_notification_no_match">Aucun résultat trouvé</string>
     <string name="recognition_notification_failed">Échec de la reconnaissance</string>
-    <string name="listen_on_metrolist">Écoutez sur Metrolist</string>
+    <string name="listen_on_justplayr">Écoutez sur JustPlayr</string>
     <string name="android_auto">Android Auto</string>
     <string name="android_auto_visible_sections">Sections visibles</string>
     <string name="android_auto_reorder_hint">Appuyez sur une section pour l\'activer ou la désactiver.\nAppuyez longuement sur la poignée de déplacement pour modifier l\'ordre. La première section s\'affichera par défaut</string>
@@ -845,9 +845,9 @@
     <string name="enable_landscape_scaling_desc">Adapter l\'interface utilisateur au mode paysage pour les écrans plus grands</string>
     <string name="enable_dynamic_icon">Couleurs dynamiques des icônes</string>
     <string name="enable_dynamic_icon_desc">Utilisez les couleurs dynamiques du thème pour l\'icône de l\'application. Lorsque cette option est désactivée, l\'icône affiche des couleurs unies.</string>
-    <string name="kmp_upgrade_title">Metrolist KMP %s est disponible</string>
-    <string name="kmp_upgrade_warning">Metrolist KMP est encore en cours de développement. Vous pourriez rencontrer des bugs ou des fonctionnalités incomplètes.</string>
-    <string name="kmp_upgrade_action">Essayez KMP</string>
+    <string name="kmp_upgrade_title">JustPlayr KMP %s est disponible</string>
+    <string name="kmp_upgrade_warning">JustPlayr KMP est en phase d\'accès anticipé. Certaines fonctionnalités peuvent présenter des dysfonctionnements, être incomplètes ou faire l\'objet de modifications sans préavis.</string>
+    <string name="kmp_upgrade_action">Passer à KMP</string>
     <string name="kmp_upgrade_later">Pas maintenant</string>
     <string name="android_auto_search_options">Options de recherche</string>
     <string name="android_auto_search_local_songs_limit">Limite de recherche de titres</string>

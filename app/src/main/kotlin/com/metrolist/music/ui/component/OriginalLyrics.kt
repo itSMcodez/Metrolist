@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -488,7 +488,7 @@ fun OriginalLyrics(
 
     val lazyListState = rememberLazyListState()
 
-    // Professional animation states for smooth Metrolist-style transitions
+    // Professional animation states for smooth JustPlayr-style transitions
     var isAnimating by remember { mutableStateOf(false) }
     var isAutoScrollEnabled by rememberSaveable { mutableStateOf(true) }
 
@@ -2205,7 +2205,7 @@ fun OriginalLyrics(
     }
 }
 
-// Professional page animation constants inspired by Metrolist design - slower for smoothness
+// Professional page animation constants inspired by JustPlayr design - slower for smoothness
 private const val METROLIST_AUTO_SCROLL_DURATION = 1500L // Much slower auto-scroll for smooth transitions
 private const val METROLIST_INITIAL_SCROLL_DURATION = 1000L // Slower initial positioning
 private const val METROLIST_SEEK_DURATION = 800L // Slower user interaction

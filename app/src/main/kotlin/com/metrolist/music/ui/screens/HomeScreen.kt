@@ -1,11 +1,12 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
 package com.metrolist.music.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -94,6 +95,9 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.itsmcodez.justplayr.manager.InterstitialAdManager
+import com.itsmcodez.justplayr.manager.InterstitialAdManager.preload
+import com.itsmcodez.justplayr.ui.component.ad.BannerAd
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.models.AlbumItem
 import com.metrolist.innertube.models.ArtistItem
@@ -168,11 +172,26 @@ import com.metrolist.music.utils.rememberPreference
 import com.metrolist.music.viewmodels.CommunityPlaylistItem
 import com.metrolist.music.viewmodels.HomeViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import kotlin.math.min
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
+
+@Composable
+private fun HomeFeedBannerAd(
+    modifier: Modifier = Modifier,
+) {
+    BannerAd(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+    )
+}
 
 sealed class HomeSection(
     val id: String,
@@ -648,6 +667,7 @@ fun HomeScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val activity = LocalActivity.current
     val navController = LocalNavController.current
     val menuState = LocalMenuState.current
     val bottomSheetPageState = LocalBottomSheetPageState.current
@@ -764,6 +784,10 @@ fun HomeScreen(
         ?.collectAsStateWithLifecycle() ?: remember { mutableStateOf(false) }
 
     var randomSeed by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(Unit) {
+        activity?.let(InterstitialAdManager::preload)
+    }
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
@@ -1433,6 +1457,12 @@ fun HomeScreen(
                             }
                         }
                     }
+
+                    item(key = "top_banner_ad") {
+                        HomeFeedBannerAd(
+                            modifier = Modifier.animateItem(),
+                        )
+                    }
                 }
 
                 homeSections.forEach { section ->
@@ -1758,6 +1788,13 @@ fun HomeScreen(
                                         }
                                     }
                                 }
+
+                                item(key = "speed_dial_banner_ad") {
+                                    HomeFeedBannerAd(
+                                        modifier = Modifier.animateItem(),
+                                    )
+                                }
+
                             }
                         }
 
@@ -1978,6 +2015,12 @@ fun HomeScreen(
                                         }
                                     }
                                 }
+
+                                item(key = "daily_discover_banner_ad") {
+                                    HomeFeedBannerAd(
+                                        modifier = Modifier.animateItem(),
+                                    )
+                                }
                             }
                         }
 
@@ -2075,6 +2118,12 @@ fun HomeScreen(
                                             ytGridItem(item)
                                         }
                                     }
+                                }
+
+                                item(key = "account_playlists_banner_ad") {
+                                    HomeFeedBannerAd(
+                                        modifier = Modifier.animateItem(),
+                                    )
                                 }
                             }
                         }
@@ -2605,7 +2654,11 @@ fun HomeScreen(
                     }
                 },
                 onRecognitionClick = {
-                    navController.navigate("recognition")
+                    activity?.let {
+                        InterstitialAdManager.showAdOnAction(it) {
+                            navController.navigate("recognition")
+                        }
+                    }
                 },
             )
         }

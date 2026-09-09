@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -138,6 +138,8 @@ fun DefaultDialog(
 
 @Composable
 fun AccountSettingsDialog(
+    onNavigateToCustomerCenter: () -> Unit,
+    onShowPaywall: () -> Unit,
     onDismiss: () -> Unit,
     latestVersionName: String,
 ) {
@@ -174,6 +176,8 @@ fun AccountSettingsDialog(
                 AccountSettings(
                     navController = navController,
                     onClose = onDismiss,
+                    onNavigateToCustomerCenter = onNavigateToCustomerCenter,
+                    onShowPaywall = onShowPaywall,
                     latestVersionName = latestVersionName,
                 )
             }

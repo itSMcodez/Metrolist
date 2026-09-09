@@ -25,7 +25,7 @@
     <string name="gradient">Độ phủ màu</string>
     <string name="player_background_blur">Làm mờ</string>
     <string name="enable_swipe_thumbnail">Bật lướt bìa để chuyển bài</string>
-    <string name="lyrics_click_change">Thay đổi lời bài hát khi nhấp vào</string>
+    <string name="lyrics_click_change">Thay đổi lời bài hát khi nhấn vào</string>
     <string name="slim">Dạng mỏng</string>
     <string name="slim_navbar">Thanh điều hướng mỏng phía dưới</string>
     <string name="advanced_login">Đăng nhập bằng token</string>
@@ -68,8 +68,8 @@
     <string name="import_csv">Nhập danh sách phát từ tệp CSV</string>
     <string name="import_online">Nhập danh sách phát từ tệp M3U</string>
     <string name="charts">Bảng xếp hạng</string>
-    <string name="album_cover_desc">Ảnh bìa album</string>
-    <string name="top_music_videos">Video âm nhạc hàng đầu</string>
+    <string name="album_cover_desc">Ảnh bìa Album</string>
+    <string name="top_music_videos">Video ca nhạc hàng đầu</string>
     <string name="sync_disabled">Đã tắt đồng bộ</string>
     <string name="cancel">Huỷ bỏ</string>
     <string name="share_as_text">Chia sẻ dưới dạng văn bản</string>
@@ -107,7 +107,7 @@
     <string name="disable">Vô hiệu hóa</string>
     <string name="subscribe">Đăng ký</string>
     <string name="subscribed">Đã đăng ký</string>
-    <string name="now_playing">ĐANG PHÁT</string>
+    <string name="now_playing">Đang phát</string>
     <string name="close">Đóng</string>
     <string name="seek_forward_dynamic">+%1$d giây tiến</string>
     <string name="seek_backward_dynamic">-%1$d giây lùi</string>
@@ -163,7 +163,7 @@
     <string name="updater">Trình cập nhật</string>
     <string name="check_for_updates">Tự động kiểm tra cập nhật</string>
     <string name="update_notifications">Bật thông báo về cập nhật</string>
-    <string name="update_available_title">Đã có bản cập nhật mới</string>
+    <string name="update_available_title">Đã có cập nhật mới</string>
     <string name="update_channel_name">Cập nhật ứng dụng</string>
     <string name="update_channel_desc">Thông báo về phiên bản mới của ứng dụng</string>
     <string name="google_cast">Truyền</string>
@@ -179,7 +179,7 @@
     <string name="show_artist_description">Hiển thị mô tả nghệ sĩ</string>
     <string name="show_artist_subscriber_count">Hiện số lượng người đăng ký</string>
     <string name="show_artist_monthly_listeners">Hiển thị số lượt nghe hằng tháng</string>
-    <string name="wrapped_logo_content_description">Metrolist Logo</string>
+    <string name="wrapped_logo_content_description">JustPlayr Logo</string>
     <string name="wrapped_year">2025</string>
     <string name="listen_together_join_room">Tham gia phòng</string>
     <string name="listen_together_create_room_desc">Tạo phòng và chia sẻ mã với bạn bè của bạn</string>
@@ -203,7 +203,7 @@
     <string name="listen_together_use_custom_server">Sử dụng máy chủ tùy chỉnh</string>
     <string name="album_art">Cài đặt widget</string>
     <string name="no_song_playing">Không có bài hát đang phát</string>
-    <string name="tap_to_open">Chạm để mở Metrolist</string>
+    <string name="tap_to_open">Chạm để mở JustPlayr</string>
     <string name="previous">Bài trước</string>
     <string name="play_pause">Phát/Tạm dừng</string>
     <string name="next">Bài tiếp</string>
@@ -275,7 +275,7 @@
     <string name="crash_description">Đã xảy ra lỗi không mong muốn. Vui lòng chia sẻ báo cáo sự cố để giúp chúng tôi khắc phục lỗi</string>
     <string name="crash_share_logs">Chia sẻ nhật ký</string>
     <string name="crash_share_title">Chia sẻ báo cáo sự cố</string>
-    <string name="crash_report_subject">Báo cáo sự cố Metrolist</string>
+    <string name="crash_report_subject">Báo cáo sự cố JustPlayr</string>
     <string name="crash_close">Đóng</string>
     <string name="crash_no_log">Không có nhật ký sự cố</string>
     <string name="palette_crimson">Đỏ thẫm</string>
@@ -312,7 +312,7 @@
     <string name="remember_shuffle_and_repeat_desc">Ghi nhớ các cài đặt phát xáo trộn và phát lại khi khởi động lại ứng dụng</string>
     <string name="pause_music_when_media_is_muted">Tạm dừng nhạc khi tắt tiếng media</string>
     <string name="keep_screen_on_when_player_is_expanded">Giữ màn hình bật khi mở trình phát</string>
-    <string name="last_fm_send_likes_description">Tự động Yêu thích hoặc Bỏ yêu thích bài hát trên Last.fm khi bạn thích hoặc bỏ thích chúng trên Metrolist</string>
+    <string name="last_fm_send_likes_description">Tự động Yêu thích hoặc Bỏ yêu thích bài hát trên Last.fm khi bạn thích hoặc bỏ thích chúng trên JustPlayr</string>
     <string name="logging_in">Đang đăng nhập…</string>
     <string name="hide_video_songs">Ẩn bài hát video</string>
     <string name="details_desc">Xem thông tin chi tiết của bài hát</string>
@@ -334,7 +334,7 @@
     <string name="equalizer_desc">Mở bộ cân bằng âm thanh</string>
     <string name="enable">Cho phép</string>
     <string name="save_episode_for_later">Lưu để nghe sau</string>
-    <string name="metrolist">METROLIST</string>
+    <string name="justplayr">JUSTPLAYR</string>
     <string name="credits_license_name">Giấy phép Công cộng GNU phiên bản 3.0 (GPLv3)</string>
     <string name="daily_discover_based_on">Dựa trên %1$s</string>
     <string name="logout_keep">Giữ lại</string>
@@ -366,7 +366,7 @@
     <string name="lyrics_provider_priority_desc">Kéo để xắp xếp lại nhà cung cấp theo ý muốn. Vị trí càng cao -&gt; Ưu tiên càng cao</string>
     <string name="changelog">Lịch sử cập nhật</string>
     <string name="changelog_empty">Không có lịch sử cập nhật có sẵn</string>
-    <string name="github_releases_url">https://github.com/MetrolistGroup/Metrolist/releases</string>
+    <string name="github_releases_url">https://github.com/JustPlayrGroup/JustPlayr/releases</string>
     <string name="list_bullet">•</string>
     <string name="view_on_github">Xem trong GitHub</string>
     <string name="current_version">Phiên bản hiện tại</string>
@@ -482,13 +482,13 @@
     <string name="wrapped_total_artists_subtitle">nghệ sĩ độc bản!</string>
     <string name="wrapped_total_songs_title">Bạn đã được nghe</string>
     <string name="wrapped_total_songs_subtitle">các bài hát độc đáo!</string>
-    <string name="wrapped_intro_title">METROLIST</string>
+    <string name="wrapped_intro_title">JUSTPLAYR</string>
     <string name="wrapped_intro_subtitle">đã đến lúc xem bạn đã nghe những gì trong suốt năm qua…</string>
     <string name="wrapped_intro_button">đi nào!</string>
     <string name="wrapped_ready_title">WRAPPED CỦA BẠN ĐÃ SẴN SÀNG!</string>
     <string name="wrapped_ready_subtitle">Đã đến lúc xem bạn đã yêu thích những gì trong suốt năm qua…</string>
     <string name="wrapped_thank_you">Cảm ơn vì đã nghe!</string>
-    <string name="wrapped_special_thanks">Trân trọng cảm ơn MO Agamy vì đã tạo ra Metrolist</string>
+    <string name="wrapped_special_thanks">Trân trọng cảm ơn MO Agamy vì đã tạo ra JustPlayr</string>
     <string name="wrapped_close">Đóng Wrapped</string>
     <string name="wrapped_create_playlist">Tạo danh sách phát</string>
     <string name="wrapped_playlist_saved">Danh sách phát đã được lưu</string>
@@ -558,7 +558,7 @@
     <string name="error_podcast_unsubscribe">Không thể hủy đăng ký podcast</string>
     <string name="view_channel">Xem kênh</string>
     <string name="not_playing">Không có bài hát đang phát</string>
-    <string name="tap_to_play">Ấn để mở Metrolist</string>
+    <string name="tap_to_play">Ấn để mở JustPlayr</string>
     <string name="widget_music_player">Máy phát Nhạc</string>
     <string name="widget_turntable">Bàn xoay</string>
     <string name="widget_recognizer_name">Nhận dạng âm nhạc</string>
@@ -667,7 +667,7 @@
     <string name="clear_recognition_history_confirm">Bạn có chắc chắn muốn xóa toàn bộ lịch sử nhận dạng nhạc không?</string>
     <string name="delete_from_history">Xoá khỏi lịch sử</string>
     <string name="re_listen">Nghe lại</string>
-    <string name="play_on_app">Phát trên Metrolist</string>
+    <string name="play_on_app">Phát trên JustPlayr</string>
     <string name="qs_tile_music_recognizer">Nhận dạng bài hát</string>
     <string name="recognition_notification_channel_name">Nhận dạng bài hát</string>
     <string name="recognition_notification_channel_desc">Hiển thị thông báo trong khi nhận dạng bài hát từ menu cài đặt nhanh</string>
@@ -675,7 +675,7 @@
     <string name="recognition_notification_processing">Đang xác định…</string>
     <string name="recognition_notification_no_match">Không tìm thấy kết quả phù hợp</string>
     <string name="recognition_notification_failed">Không nhận dạng được</string>
-    <string name="listen_on_metrolist">Nghe trên Metrolist</string>
+    <string name="listen_on_justplayr">Nghe trên JustPlayr</string>
     <string name="map_csv_columns">Ánh xạ các cột CSV</string>
     <string name="first_row_is_header">Dòng đầu tiên là tiêu đề</string>
     <string name="artist_name_column">Cột Tên nghệ sĩ</string>
@@ -693,7 +693,7 @@
     <string name="discord_buttons">Nút</string>
     <string name="discord_button_1">Nút 1</string>
     <string name="discord_button_2">Nút 2</string>
-    <string name="discord_information_warning">Metrolist sử dụng API OAuth2 công khai và Gateway của Discord để chia sẻ nội dung bạn đang nghe. Quá trình ủy quyền diễn ra thông qua một phiên trình duyệt cục bộ và tự động đóng sau khi nhận mã — không có dữ liệu nào được gửi đến máy chủ bên thứ ba. Mã token của bạn được lưu trữ trên thiết bị này trong phần cài đặt bảo mật mã hóa và không bao giờ được chia sẻ. Metrolist kết nối trực tiếp đến wss://gateway.discord.gg để cập nhật hoạt động của bạn, và chỉ yêu cầu các quyền tối thiểu cần thiết (sdk.social_layer_presence).</string>
+    <string name="discord_information_warning">JustPlayr sử dụng API OAuth2 công khai và Gateway của Discord để chia sẻ nội dung bạn đang nghe. Quá trình ủy quyền diễn ra thông qua một phiên trình duyệt cục bộ và tự động đóng sau khi nhận mã — không có dữ liệu nào được gửi đến máy chủ bên thứ ba. Mã token của bạn được lưu trữ trên thiết bị này trong phần cài đặt bảo mật mã hóa và không bao giờ được chia sẻ. JustPlayr kết nối trực tiếp đến wss://gateway.discord.gg để cập nhật hoạt động của bạn, và chỉ yêu cầu các quyền tối thiểu cần thiết (sdk.social_layer_presence).</string>
     <string name="discord_activity_type">Loại hoạt động</string>
     <string name="discord_activity_playing">Đang phát</string>
     <string name="discord_activity_listening">Đang nghe</string>
@@ -802,6 +802,8 @@
     <string name="discord_error_token_refresh_failed">Phiên đăng nhập Discord đã hết hạn. Vui lòng kết nối lại.</string>
     <string name="discord_error_invalid_scope">Discord đã từ chối kết nối. Vui lòng kết nối lại và cấp quyền truy cập theo yêu cầu.</string>
     <string name="discord_error_banner_title">Lỗi Discord</string>
+    <string name="discord_integration">Tích hợp Discord</string>
+    <string name="enable_discord_rpc">Bật tính năng Rich Presence</string>
     <string name="discord_state">Trạng thái</string>
     <string name="discord_details">Chi tiết</string>
     <string name="discord_enable_button_1">Hiển thị nút 1</string>
@@ -834,9 +836,9 @@
     <string name="enable_dynamic_icon">Biểu tượng theo chủ đề</string>
     <string name="enable_dynamic_icon_desc">Sử dụng biểu tượng theo chủ đề. Khi tắt, biểu tượng sẽ sử dụng màu đơn sắc.</string>
     <string name="playlist_unavailable">Không tìm thấy danh sách phát</string>
-    <string name="kmp_upgrade_title">Đã có phiên bản Metrolist KMP %s</string>
-    <string name="kmp_upgrade_warning">Ứng dụng Metrolist KMP vẫn đang trong quá trình phát triển. Bạn có thể gặp phải lỗi hoặc các tính năng chưa hoàn thiện.</string>
-    <string name="kmp_upgrade_action">Thử KMP</string>
+    <string name="kmp_upgrade_title">Đã có phiên bản JustPlayr KMP %s</string>
+    <string name="kmp_upgrade_warning">JustPlayr KMP đang trong giai đoạn thử nghiệm sớm. Các tính năng có thể bị lỗi, chưa hoàn thiện hoặc thay đổi mà không cần báo trước.</string>
+    <string name="kmp_upgrade_action">Nâng cấp lên phiên bản KMP</string>
     <string name="kmp_upgrade_later">Để sau</string>
     <string name="android_auto_search_options">Tùy chọn tìm kiếm</string>
     <string name="android_auto_search_local_songs_limit">Giới hạn tìm kiếm bài hát</string>
@@ -847,18 +849,4 @@
     <string name="youtube_channels_failed">Không thể lấy danh sách kênh YouTube cho tài khoản này. Vui lòng thử lại.</string>
     <string name="authentication_data_extraction_failed">Không thể truy cập phiên đăng nhập YouTube Music. Vui lòng thử lại.</string>
     <string name="login_failed_with_error">Lỗi đăng nhập: %1$s</string>
-    <string name="add_to_playlist_position">Vị trí thêm vào danh sách phát</string>
-    <string name="playlist_position_beginning">Đầu danh sách phát</string>
-    <string name="playlist_position_beginning_desc">Bài hát mới thêm sẽ xuất hiện trước các bài hát cũ</string>
-    <string name="playlist_position_end">Cuối danh sách phát</string>
-    <string name="playlist_position_end_desc">Bài hát mới thêm sẽ xuất hiện sau các bài hát cũ</string>
-    <string name="error_no_internet_connection">Không có kết nối Internet</string>
-    <string name="error_offline_playback">Bạn đang ngoại tuyến. Hãy kết nối Internet hoặc phát bản nhạc đã tải xuống để nghe ngoại tuyến.</string>
-    <string name="error_explicit_login_recommended">Phát nội dung nhạy cảm hoạt động tốt hơn khi đăng nhập tài khoản.</string>
-    <string name="playlist_created_locally">Đồng bộ hóa với YouTube thất bại. Đã tạo danh sách phát cục bộ.</string>
-    <string name="ai_provider_inception_help">Truy cập https://platform.inceptionlabs.ai để lấy khóa API</string>
-    <string name="enable_zemer">Bật nhà cung cấp lời bài hát Zemer</string>
-    <string name="enable_zemer_desc">Lời bài hát cho âm nhạc Do Thái</string>
-    <string name="update_available_message">Metrolist %s đã sẵn sàng để tải xuống.</string>
-    <string name="update_action">Cập nhật</string>
 </resources>

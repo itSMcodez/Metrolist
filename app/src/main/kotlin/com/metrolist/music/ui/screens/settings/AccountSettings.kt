@@ -1,5 +1,5 @@
 /**
- * Metrolist Project (C) 2026
+ * JustPlayr Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
 
@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.itsmcodez.justplayr.manager.LocalSubscriptionManager
 import com.metrolist.innertube.YouTube
 import com.metrolist.innertube.utils.parseCookieString
 import com.metrolist.music.BuildConfig
@@ -76,11 +77,15 @@ import com.metrolist.music.viewmodels.HomeViewModel
 @Composable
 fun AccountSettings(
     navController: NavController,
+    onNavigateToCustomerCenter: () -> Unit,
+    onShowPaywall: () -> Unit,
     onClose: () -> Unit,
     latestVersionName: String
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val subscriptionManager = LocalSubscriptionManager.current
+    val subscriptionUiState = subscriptionManager.subscriptionUiState
 
     val (accountNamePref, onAccountNameChange) = rememberPreference(AccountNameKey, "")
     val (accountEmail, onAccountEmailChange) = rememberPreference(AccountEmailKey, "")
@@ -127,6 +132,37 @@ fun AccountSettings(
             IconButton(onClick = onClose) {
                 Icon(painterResource(R.drawable.close), contentDescription = null)
             }
+        }
+
+        // Paywall Dialog
+        if (!subscriptionManager.isPro) {
+            Spacer(Modifier.height(12.dp))
+
+            Material3SettingsGroup(
+                items = listOf(
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.crown),
+                        title = { Text(stringResource(R.string.subscription_upgrade_title)) },
+                        description = { Text(stringResource(R.string.subscription_upgrade_summary)) },
+                        onClick = {
+                            if (subscriptionManager.isPro) {
+                                onNavigateToCustomerCenter()
+                            } else if (subscriptionUiState.isPaywallAvailable) {
+                                onShowPaywall()
+                            } else {
+                                subscriptionManager.refreshAll()
+                                android.widget.Toast.makeText(
+                                    context,
+                                    R.string.subscription_unavailable,
+                                    android.widget.Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                        },
+                        showBadge = !subscriptionManager.isPro,
+                    ),
+                ),
+                useLowContrast = true,
+            )
         }
 
         Spacer(Modifier.height(12.dp))
@@ -389,7 +425,8 @@ fun AccountSettings(
 
         Material3SettingsGroup(
             items = buildList {
-                add(
+                // No ops in JustPlayr
+                /*add(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.integrations)) },
                         icon = painterResource(R.drawable.integration),
@@ -398,13 +435,12 @@ fun AccountSettings(
                             navController.navigate("settings/integrations")
                         }
                     )
-                )
+                )*/
                 add(
                     Material3SettingsItem(
                         title = { Text(stringResource(R.string.settings)) },
                         icon = painterResource(R.drawable.settings),
-                        showBadge = BuildConfig.UPDATER_AVAILABLE &&
-                            latestVersionName != BuildConfig.BASE_VERSION_NAME,
+                        showBadge = subscriptionManager.isPro.not(),
                         onClick = {
                             onClose()
                             navController.navigate("settings")
@@ -412,7 +448,8 @@ fun AccountSettings(
                     )
                 )
 
-                if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+                // No ops in JustPlayr
+                /*if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
                     val releaseInfo = Updater.getCachedLatestRelease()
                     val downloadUrl = releaseInfo?.let { Updater.getDownloadUrlForCurrentVariant(it) }
                     if (downloadUrl != null) {
@@ -426,7 +463,7 @@ fun AccountSettings(
                             )
                         )
                     }
-                }
+                }*/
             },
             useLowContrast = true
         )
