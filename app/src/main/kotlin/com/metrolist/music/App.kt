@@ -36,7 +36,6 @@ import com.metrolist.innertube.models.ArtistConjunctions
 import com.metrolist.innertube.models.YouTubeLocale
 import com.metrolist.kugou.KuGou
 import com.metrolist.lastfm.LastFM
-import com.metrolist.music.BuildConfig
 import com.metrolist.music.constants.*
 import com.metrolist.music.di.ApplicationScope
 import com.metrolist.music.extensions.toEnum
@@ -91,40 +90,42 @@ class App :
         CrashHandler.install(this)
         ArtistNameAliases.initialize(this)
 
-        // Initialize App Integrity
-        Firebase.initialize(context = this)
-        Firebase.appCheck.installAppCheckProviderFactory(
-            if (BuildConfig.DEBUG) DebugAppCheckProviderFactory.getInstance()
-            else PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
-
-        // Firebase Remote Config
-        RemoteConfigManager.init(BuildConfig.DEBUG)
-        RemoteConfigManager.fetch { Timber.i("Remote Config fetched: $it") }
-        RemoteConfigManager.startRealtimeUpdates { Timber.i("Remote Config updated") }
-        logFirebaseMessagingToken()
-
-        // Initialize PostHog
-        val posthogConfig = PostHogAndroidConfig(
-            apiKey = BuildConfig.POSTHOG_API_KEY,
-            host = BuildConfig.POSTHOG_HOST,
-        )
-        PostHogAndroid.setup(this, posthogConfig)
-
-        // Initialize RevenueCat only when an SDK key is available.
-        Purchases.logLevel = if (BuildConfig.DEBUG) LogLevel.DEBUG else LogLevel.WARN
-        if (BuildConfig.REVENUECAT_API_KEY.isNotBlank()) {
-            Purchases.configure(
-                PurchasesConfiguration.Builder(this, BuildConfig.REVENUECAT_API_KEY).build(),
+        if(isMainProcess()) {
+            // Init Firebase
+            Firebase.initialize(context = this)
+            Firebase.appCheck.installAppCheckProviderFactory(
+                if (BuildConfig.DEBUG) DebugAppCheckProviderFactory.getInstance()
+                else PlayIntegrityAppCheckProviderFactory.getInstance()
             )
-            SubscriptionManager.getInstance(this)
-        } else {
-            Timber.tag("App").w("RevenueCat API key is blank. Subscription features are disabled.")
-        }
 
-        // initialize admob mobile ads
-        CoroutineScope(Dispatchers.IO).launch {
-            MobileAds.initialize(this@App){}
+            // Firebase Remote Config
+            RemoteConfigManager.init(BuildConfig.DEBUG)
+            RemoteConfigManager.fetch { Timber.i("Remote Config fetched: $it") }
+            RemoteConfigManager.startRealtimeUpdates { Timber.i("Remote Config updated") }
+            logFirebaseMessagingToken()
+
+            // Initialize PostHog
+            val posthogConfig = PostHogAndroidConfig(
+                apiKey = BuildConfig.POSTHOG_API_KEY,
+                host = BuildConfig.POSTHOG_HOST,
+            )
+            PostHogAndroid.setup(this, posthogConfig)
+
+            // Initialize RevenueCat only when an SDK key is available.
+            Purchases.logLevel = if (BuildConfig.DEBUG) LogLevel.DEBUG else LogLevel.WARN
+            if (BuildConfig.REVENUECAT_API_KEY.isNotBlank()) {
+                Purchases.configure(
+                    PurchasesConfiguration.Builder(this, BuildConfig.REVENUECAT_API_KEY).build(),
+                )
+                SubscriptionManager.getInstance(this)
+            } else {
+                Timber.tag("App").w("RevenueCat API key is blank. Subscription features are disabled.")
+            }
+
+            // initialize admob mobile ads
+            CoroutineScope(Dispatchers.IO).launch {
+                MobileAds.initialize(this@App){}
+            }
         }
 
         // preferencesDataStore uses filesDir/datastore; proactive mkdir reduces failures on odd ROM states

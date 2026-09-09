@@ -3,6 +3,7 @@ firebaseBom = "34.18.0"
 revenuecat = "10.20.0"
 playServicesAds = "25.4.0"
 userMessagingPlatform = "4.0.0"
+googleGmsGoogleServices = "4.4.4"
 androidGradlePlugin = "9.3.1"
 browser = "1.10.0"
 robolectric = "4.16.1"
@@ -129,3 +130,5 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version = "0.10.0" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+

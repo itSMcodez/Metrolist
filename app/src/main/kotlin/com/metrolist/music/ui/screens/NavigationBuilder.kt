@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -462,7 +463,8 @@ fun NavGraphBuilder.navigationBuilder(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "© JustPlayr\nJust Press Play!",
+                text = "JustPlayr\nJust Press Play!\n©2026",
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge
             )
         }

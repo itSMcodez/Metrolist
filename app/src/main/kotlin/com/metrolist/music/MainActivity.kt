@@ -517,6 +517,7 @@ class MainActivity : FragmentActivity() {
                         downloadUtil = downloadUtil,
                         syncUtils = syncUtils,
                         subscriptionUiState = subscriptionUiState,
+                        subscriptionManager = subscriptionManager,
                         onDismissPaywall = {
                             if(showLaunchPaywall) showLaunchPaywall = false
                             if(::navController.isInitialized) navController.navigateUp()
@@ -1464,9 +1465,11 @@ class MainActivity : FragmentActivity() {
                             },
                             onShowPaywall = {
                                 navController.navigate("paywall")
+                                showAccountDialog = false
                             },
                             onNavigateToCustomerCenter = {
                                 navController.navigate("customer_center")
+                                showAccountDialog = false
                             },
                             latestVersionName = latestVersionName,
                         )

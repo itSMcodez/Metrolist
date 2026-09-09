@@ -30,6 +30,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -64,6 +65,12 @@ android {
         buildConfigField("Long", "DISCORD_APP_ID", "1447278780795064401L")
         buildConfigField("Boolean", "CAST_AVAILABLE", "true")
         buildConfigField("Boolean", "UPDATER_AVAILABLE", "true")
+
+        // PostHog
+        val posthogApiKey = localProperties.getProperty("POSTHOG_API_KEY") ?: System.getenv("POSTHOG_API_KEY") ?: ""
+        val posthogHost = localProperties.getProperty("POSTHOG_HOST") ?: System.getenv("POSTHOG_HOST") ?: "https://us.i.posthog.com"
+        buildConfigField("String", "POSTHOG_API_KEY", "\"$posthogApiKey\"")
+        buildConfigField("String", "POSTHOG_HOST", "\"$posthogHost\"")
     }
 
     /*flavorDimensions += listOf("variant")
