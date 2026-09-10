@@ -71,6 +71,19 @@ android {
         val posthogHost = localProperties.getProperty("POSTHOG_HOST") ?: System.getenv("POSTHOG_HOST") ?: "https://us.i.posthog.com"
         buildConfigField("String", "POSTHOG_API_KEY", "\"$posthogApiKey\"")
         buildConfigField("String", "POSTHOG_HOST", "\"$posthogHost\"")
+
+        // Google UMP
+        val umpTestDeviceHashedId =
+            localProperties.getProperty("UMP_TEST_DEVICE_HASHED_ID")
+                ?: System.getenv("UMP_TEST_DEVICE_HASHED_ID")
+                ?: ""
+        buildConfigField("String", "UMP_TEST_DEVICE_HASHED_ID", "\"$umpTestDeviceHashedId\"")
+
+        val umpDebugGeography =
+            localProperties.getProperty("UMP_DEBUG_GEOGRAPHY")
+                ?: System.getenv("UMP_DEBUG_GEOGRAPHY")
+                ?: "DISABLED"
+        buildConfigField("String", "UMP_DEBUG_GEOGRAPHY", "\"$umpDebugGeography\"")
     }
 
     /*flavorDimensions += listOf("variant")
@@ -165,18 +178,6 @@ android {
             applicationIdSuffix = ".debug" // JustPlayr uses this suffix
             isDebuggable = true
             resValue("string", "app_name", "JustPlayr Debug") // JustPlayr debug app name
-            // Google UMP
-            val umpTestDeviceHashedId =
-                localProperties.getProperty("UMP_TEST_DEVICE_HASHED_ID")
-                    ?: System.getenv("UMP_TEST_DEVICE_HASHED_ID")
-                    ?: ""
-            buildConfigField("String", "UMP_TEST_DEVICE_HASHED_ID", "\"$umpTestDeviceHashedId\"")
-
-            val umpDebugGeography =
-                localProperties.getProperty("UMP_DEBUG_GEOGRAPHY")
-                    ?: System.getenv("UMP_DEBUG_GEOGRAPHY")
-                    ?: "DISABLED"
-            buildConfigField("String", "UMP_DEBUG_GEOGRAPHY", "\"$umpDebugGeography\"")
 
             // Admob Test App ID
             val testAdmobAppId = localProperties.getProperty("TEST_ADMOB_APP_ID") ?: System.getenv("TEST_ADMOB_APP_ID") ?: ""
