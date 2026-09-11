@@ -151,7 +151,6 @@ class MusicDatabase(
         AutoMigration(from = 34, to = 35),
         AutoMigration(from = 35, to = 36, spec = Migration35To36::class),
         AutoMigration(from = 36, to = 37),
-        AutoMigration(from = 37, to = 38),
     ],
 )
 @TypeConverters(Converters::class)
@@ -196,6 +195,7 @@ abstract class InternalDatabase : RoomDatabase() {
                     MIGRATION_21_24,
                     MIGRATION_22_24,
                     MIGRATION_24_25,
+                    MIGRATION_37_38,
                 ).fallbackToDestructiveMigration(false)
                 .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
                 .setTransactionExecutor(
@@ -864,5 +864,14 @@ class Migration35To36 : AutoMigrationSpec {
         if (!hasIsCached) {
             db.execSQL("ALTER TABLE song ADD COLUMN isCached INTEGER NOT NULL DEFAULT 0")
         }
+    }
+}
+
+val MIGRATION_37_38 = object : Migration(37, 38) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        addColumnIfMissing(db, "speed_dial_item", "subtitleIds", "TEXT")
+        addColumnIfMissing(db, "speed_dial_item", "albumId", "TEXT")
+        addColumnIfMissing(db, "speed_dial_item", "albumName", "TEXT")
+        addColumnIfMissing(db, "artist", "cachedPageJson", "TEXT")
     }
 }

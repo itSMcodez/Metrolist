@@ -41,8 +41,8 @@ android {
         applicationId = "com.itsmcodez.justplayr" /*applicationIdOverride ?: baseApplicationId*/
         minSdk = 26
         targetSdk = 36
-        versionCode = 11 // 152
-        versionName = "2.0.0-beta" // "13.6.3"
+        versionCode = 13 // 152
+        versionName = "2.0.2-beta" // "13.6.3"
         /*val baseVersionName = requireNotNull(versionName)
         buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
         buildCommit?.let { versionName = "$baseVersionName+$it" }
